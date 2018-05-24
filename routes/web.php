@@ -23,4 +23,13 @@ Route::group(['namespace'=>'Admin', 'prefix' => 'admin'], function() {
 
     Route::get('/', 'HomeController@index')->name('admin.dashboard');
 
+    // Login
+    Route::get('login', 'Auth\LoginController@showLoginForm')->name('admin.login');
+    Route::post('login', 'Auth\LoginController@login');
+    Route::post('logout', 'Auth\LoginController@logout')->name('admin.logout');
+
+    // Register
+    Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('admin.register');
+    Route::post('register', 'Auth\RegisterController@register');
+
 });
