@@ -3,7 +3,7 @@
 Route::group(['namespace' => 'Admin'], function() {
 
     // Dashboard
-    Route::get('/', 'HomeController@index')->name('admin.dashboard');
+    Route::get('/', 'HomeController@index')->middleware('admin.verified')->name('admin.dashboard');
 
     // Login
     Route::get('login', 'Auth\LoginController@showLoginForm')->name('admin.login');
@@ -19,5 +19,10 @@ Route::group(['namespace' => 'Admin'], function() {
     Route::post('password/reset', 'Auth\ResetPasswordController@reset');
     Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('admin.password.request');
     Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('admin.password.reset');
+
+    // Verify
+    Route::get('email/resend', 'Auth\VerificationController@resend')->name('admin.verification.resend');
+    Route::get('email/verify', 'Auth\VerificationController@show')->name('admin.verification.notice');
+    Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('admin.verification.verify');
 
 });

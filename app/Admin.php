@@ -3,10 +3,12 @@
 namespace App;
 
 use App\Notifications\Admin\Auth\ResetPassword;
+use App\Notifications\Admin\Auth\VerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
 
@@ -38,4 +40,15 @@ class Admin extends Authenticatable
     {
         $this->notify(new ResetPassword($token));
     }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
+    }
+
 }
