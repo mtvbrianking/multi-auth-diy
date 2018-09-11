@@ -2,8 +2,8 @@
 
 Route::group(['namespace' => 'Admin'], function() {
 
-    Route::get('/', 'HomeController@index')->middleware('admin.verified')->name('admin.dashboard');
-//    Route::get('/', 'HomeController@index')->name('admin.dashboard');
+    // Dashboard
+    Route::get('/', 'HomeController@index')->name('admin.dashboard');
 
     // Login
     Route::get('login', 'Auth\LoginController@showLoginForm')->name('admin.login');
