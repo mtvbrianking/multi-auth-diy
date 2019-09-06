@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class RedirectIfAdmin
 {
-
     /**
      * Handle an incoming request.
      *

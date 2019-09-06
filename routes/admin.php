@@ -2,7 +2,6 @@
 
 Route::group(['namespace' => 'Admin'], function() {
 
-    // Dashboard
     Route::get('/', 'HomeController@index')->middleware('admin.verified')->name('admin.dashboard');
 
     // Login
@@ -21,8 +20,8 @@ Route::group(['namespace' => 'Admin'], function() {
     Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('admin.password.reset');
 
     // Verify
-    Route::get('email/resend', 'Auth\VerificationController@resend')->name('admin.verification.resend');
+    Route::post('email/resend', 'Auth\VerificationController@resend')->name('admin.verification.resend');
     Route::get('email/verify', 'Auth\VerificationController@show')->name('admin.verification.notice');
-    Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('admin.verification.verify');
+    Route::get('email/verify/{id}/{hash}', 'Auth\VerificationController@verify')->name('admin.verification.verify');
 
 });

@@ -133,4 +133,22 @@ return [
 
     'log_channel' => env('MAIL_LOG_CHANNEL'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Allow self signed certificates.
+    |--------------------------------------------------------------------------
+    |
+    | https://stackoverflow.com/q/30714229/2732184
+    |
+    |
+    */
+
+    'stream' => [
+        'ssl' => [
+            'allow_self_signed' => env('MAIL_SSL_ALLOW_SELF_SIGNED', true),
+            'verify_peer' => env('MAIL_SSL_VERIFY_PEER', false),
+            'verify_peer_name' => env('MAIL_SSL_VERIFY_PEER_NAME', false),
+        ],
+    ],
+
 ];
