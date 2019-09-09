@@ -16,7 +16,7 @@ class HomeControllerTest extends TestCase
 
     public function test_cant_visit_home_unauthenticated()
     {
-        $response = $this->get('/admin');
+        $response = $this->get(route('admin.dashboard'));
         $response->assertStatus(302);
         $response->assertRedirect(route('admin.login'));
     }
@@ -25,7 +25,7 @@ class HomeControllerTest extends TestCase
     {
         $admin = factory(Admin::class)->create();
 
-        $response = $this->actingAs($admin, 'admin')->get('/admin');
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.dashboard'));
 
         $response->assertStatus(200);
     }
@@ -34,7 +34,7 @@ class HomeControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user, 'web')->get('/admin');
+        $response = $this->actingAs($user, 'web')->get(route('admin.dashboard'));
 
         $response->assertStatus(302);
         $response->assertRedirect(route('admin.login'));
