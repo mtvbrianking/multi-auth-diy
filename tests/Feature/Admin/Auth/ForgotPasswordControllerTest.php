@@ -23,11 +23,13 @@ class ForgotPasswordControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.password.request'));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
     }
 
     public function test_can_visit_forgot_password_when_not_authenticated()
     {
+        $this->withoutExceptionHandling();
+
         $response = $this->get(route('admin.password.request'));
 
         $response->assertSuccessful();

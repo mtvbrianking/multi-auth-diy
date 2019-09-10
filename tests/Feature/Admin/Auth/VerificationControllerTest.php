@@ -57,7 +57,7 @@ class VerificationControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.verification.notice'));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
     }
 
     public function test_can_visit_email_verification_when_not_verified()
@@ -109,7 +109,7 @@ class VerificationControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get($this->validVerificationVerifyRoute($admin));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
     }
 
     public function test_cant_verify_email_with_invalid_signature()
@@ -131,7 +131,7 @@ class VerificationControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get($this->validVerificationVerifyRoute($admin));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
 
         $this->assertNotNull($admin->fresh()->email_verified_at);
     }
@@ -151,7 +151,7 @@ class VerificationControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->post(route('admin.verification.resend'));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
     }
 
     public function test_can_request_resend_email_verification_link()

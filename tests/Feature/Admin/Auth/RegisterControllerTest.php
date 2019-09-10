@@ -23,7 +23,7 @@ class RegisterControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.register'));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
     }
 
     public function test_can_visit_register_when_not_authenticated()
@@ -131,7 +131,7 @@ class RegisterControllerTest extends TestCase
             'password_confirmation' => 'gJrFhC2B-!Y!4CTk',
         ]);
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
         $this->assertCount(1, $admins = Admin::all());
         $admin = $admins->first();
         $this->assertAuthenticatedAs($admin, 'admin');

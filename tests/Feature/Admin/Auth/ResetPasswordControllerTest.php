@@ -28,7 +28,7 @@ class ResetPasswordControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.password.reset', $this->getResetToken($admin)));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
     }
 
     public function test_can_visit_reset_password_when_unauthenticated()
@@ -50,7 +50,7 @@ class ResetPasswordControllerTest extends TestCase
             'password' => Hash::make('old-password'),
         ]);
 
-        $response = $this->from(route('admin.password.reset', 'invalid_token'))->post('admin/password/reset', [
+        $response = $this->from(route('admin.password.reset', 'invalid_token'))->post(route('admin.password.update'), [
             'token' => 'invalid_token',
             'email' => $admin->email,
             'password' => 'new-awesome-password',
@@ -71,7 +71,7 @@ class ResetPasswordControllerTest extends TestCase
 
         $reset_token = $this->getResetToken($admin);
 
-        $response = $this->from(route('admin.password.reset', $reset_token))->post('admin/password/reset', [
+        $response = $this->from(route('admin.password.reset', $reset_token))->post(route('admin.password.update'), [
             'token' => $reset_token,
             'email' => '',
             'password' => 'new-awesome-password',
@@ -94,7 +94,7 @@ class ResetPasswordControllerTest extends TestCase
 
         $reset_token = $this->getResetToken($admin);
 
-        $response = $this->from(route('admin.password.reset', $reset_token))->post('admin/password/reset', [
+        $response = $this->from(route('admin.password.reset', $reset_token))->post(route('admin.password.update'), [
             'token' => $reset_token,
             'email' => $admin->email,
             'password' => '87654321',
@@ -118,14 +118,14 @@ class ResetPasswordControllerTest extends TestCase
 
         $reset_token = $this->getResetToken($admin);
 
-        $response = $this->post('admin/password/reset', [
+        $response = $this->post(route('admin.password.update'), [
             'token' => $reset_token,
             'email' => $admin->email,
             'password' => 'new-awesome-password',
             'password_confirmation' => 'new-awesome-password',
         ]);
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
         $this->assertEquals($admin->email, $admin->fresh()->email);
         $this->assertTrue(Hash::check('new-awesome-password', $admin->fresh()->password));
         $this->assertAuthenticatedAs($admin, 'admin');

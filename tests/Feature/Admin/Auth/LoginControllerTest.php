@@ -21,7 +21,7 @@ class LoginControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.login'));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
     }
 
     public function test_can_visit_login_if_not_authenticated()
@@ -112,7 +112,7 @@ class LoginControllerTest extends TestCase
             'password' => $password,
         ]);
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
         $this->assertAuthenticatedAs($admin, 'admin');
     }
 
@@ -138,7 +138,7 @@ class LoginControllerTest extends TestCase
 
         $admin = $admin->fresh();
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
         $response->assertCookie(Auth::guard('admin')->getRecallerName(), vsprintf('%s|%s|%s', [
             $admin->id,
             $admin->getRememberToken(),
@@ -151,7 +151,7 @@ class LoginControllerTest extends TestCase
     {
         $response = $this->post(route('admin.logout'));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
         $this->assertGuest('admin');
     }
 
@@ -161,7 +161,7 @@ class LoginControllerTest extends TestCase
 
         $response = $this->post(route('admin.logout'));
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('admin.home'));
         $this->assertGuest('admin');
     }
 }
