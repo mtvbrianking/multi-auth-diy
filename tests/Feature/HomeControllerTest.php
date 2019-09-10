@@ -15,19 +15,19 @@ class HomeControllerTest extends TestCase
 
     public function test_can_visit_landing_page_unauthenticated()
     {
-        $this->get('/')->assertStatus(200);
+        $this->get(route('landing'))->assertStatus(200);
     }
 
     public function test_can_visit_home_unauthenticated()
     {
-        $this->get('/home')->assertStatus(302)->assertRedirect(route('login'));
+        $this->get(route('home'))->assertStatus(302)->assertRedirect(route('login'));
     }
 
     public function test_can_visit_home_if_authenticated()
     {
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->get('/home');
+        $response = $this->actingAs($user)->get(route('home'));
 
         $response->assertStatus(200);
     }

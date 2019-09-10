@@ -6,9 +6,6 @@ use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
-
-    // protected $redirectTo = '/admin/login';
-
     /**
      * Create a new controller instance.
      *
