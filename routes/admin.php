@@ -1,7 +1,6 @@
 <?php
 
-Route::group(['namespace' => 'Admin'], function() {
-
+Route::group(['namespace' => 'Admin'], function () {
     Route::get('/', 'HomeController@index')->name('admin.home');
     // Route::get('/', 'HomeController@index')->middleware('admin.verified')->name('admin.home');
 

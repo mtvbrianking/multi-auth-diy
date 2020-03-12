@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Admin;
 
-use App\User;
 use App\Admin;
-use Tests\TestCase;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\HomeController

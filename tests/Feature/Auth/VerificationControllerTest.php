@@ -4,12 +4,12 @@ namespace Tests\Feature\Auth;
 
 use App\User;
 use Carbon\Carbon;
-use Tests\TestCase;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
+use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\VerificationController

@@ -3,13 +3,13 @@
 namespace Tests\Feature\Admin\Auth;
 
 use App\Admin;
+use App\Notifications\Admin\Auth\VerifyEmail;
 use Carbon\Carbon;
-use Tests\TestCase;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\Admin\Auth\VerifyEmail;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
+use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\Auth\VerificationController

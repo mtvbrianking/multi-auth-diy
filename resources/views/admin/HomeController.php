@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
-
     protected $redirectTo = '/admin/login';
 
     /**
@@ -24,8 +23,8 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
+    public function index()
+    {
         return view('admin.home');
     }
-
 }
