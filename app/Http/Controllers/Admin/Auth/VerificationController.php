@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\VerifiesEmails;
-use Illuminate\Auth\Access\AuthorizationException;
 
 class VerificationController extends Controller
 {
@@ -100,5 +100,4 @@ class VerificationController extends Controller
 
         return back()->with('resent', true);
     }
-
 }

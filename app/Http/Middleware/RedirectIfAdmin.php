@@ -23,5 +23,4 @@ class RedirectIfAdmin
 
         return $next($request);
     }
-
 }

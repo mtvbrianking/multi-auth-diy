@@ -3,12 +3,12 @@
 namespace Tests\Feature\Admin\Auth;
 
 use App\Admin;
-use Tests\TestCase;
+use App\Notifications\Admin\Auth\ResetPassword;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\Admin\Auth\ResetPassword;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\Auth\ForgotPasswordController

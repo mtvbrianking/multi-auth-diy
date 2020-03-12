@@ -2,9 +2,9 @@
 
 namespace App\Notifications\Admin\Auth;
 
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Lang;
 
 class ResetPassword extends Notification
 {
