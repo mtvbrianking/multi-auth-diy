@@ -151,7 +151,7 @@ class LoginControllerTest extends TestCase
     {
         $response = $this->post(route('logout'));
 
-        $response->assertRedirect(route('landing'));
+        $response->assertRedirect(url('/'));
         $this->assertGuest();
     }
 
@@ -161,7 +161,7 @@ class LoginControllerTest extends TestCase
 
         $response = $this->post(route('logout'));
 
-        $response->assertRedirect(route('landing'));
+        $response->assertRedirect(url('/'));
         $this->assertGuest();
     }
 }

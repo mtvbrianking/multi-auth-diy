@@ -15,7 +15,7 @@ class HomeControllerTest extends TestCase
 
     public function test_can_visit_landing_page_unauthenticated()
     {
-        $this->get(route('landing'))->assertStatus(200);
+        $this->get(url('/'))->assertStatus(200);
     }
 
     public function test_can_visit_home_unauthenticated()
