@@ -17,20 +17,15 @@ jobs:
       before_script:
         - travis_retry composer self-update
         - travis_retry composer update --prefer-lowest --no-ansi --no-interaction --no-progress --no-scripts
+        - vendor/bin/phpunit --dump-xdebug-filter xdebug-filter.php
 
       script:
-        - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+        # - vendor/bin/phpunit --prepend xdebug-filter.php --coverage-html coverage
+        - vendor/bin/phpunit --prepend xdebug-filter.php --coverage-text --coverage-clover=coverage.clover
 
-    - stage: test
-
-      php: 7.3
-
-      before_script:
-        - travis_retry composer self-update
-        - travis_retry composer update --prefer-lowest --no-ansi --no-interaction --no-progress --no-scripts
-
-      script:
-        - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+      after_script:
+        - wget https://scrutinizer-ci.com/ocular.phar
+        - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 # https://docs.travis-ci.com/user/notifications
 notifications:
