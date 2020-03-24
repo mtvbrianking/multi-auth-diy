@@ -2,14 +2,15 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Admin;
 use App\Notifications\Admin\Auth\VerifyEmail;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
+use Tests\Models\Admin;
 use Tests\TestCase;
 
 /**
@@ -22,6 +23,8 @@ class VerificationControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->app->make(Factory::class)->load(__DIR__.'/../../../factories');
 
         Route::name('admin.verified')
             ->middleware(['admin.auth:admin', 'admin.verified'])

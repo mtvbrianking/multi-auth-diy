@@ -39,14 +39,4 @@ class HomeControllerTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect(route('admin.login'));
     }
-
-    public function test_can_admins_cant_access_default_user_side()
-    {
-        $admin = factory(Admin::class)->create();
-
-        $response = $this->actingAs($admin, 'admin')->get(route('home'));
-
-        $response->assertStatus(302);
-        $response->assertRedirect(route('login'));
-    }
 }
