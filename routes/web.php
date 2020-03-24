@@ -19,8 +19,4 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => true]);
 
-Route::get('/protected', function () {
-    return response('Users must confirm their password before continuing...');
-})->name('password.protected')->middleware(['auth', 'password.confirm']);
-
 Route::get('/home', 'HomeController@index')->name('home');

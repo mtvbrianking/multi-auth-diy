@@ -27,7 +27,11 @@ class VerificationControllerTest extends TestCase
         $this->app->make(Factory::class)->load(__DIR__.'/../../../factories');
 
         Route::name('admin.verified')
-            ->middleware(['admin.auth:admin', 'admin.verified'])
+            ->middleware([
+                'web',
+                'admin.auth:admin',
+                'admin.verified',
+            ])
             ->get('admin/verified', function () {
                 return response('Accessed a resource that requires verification.');
             });

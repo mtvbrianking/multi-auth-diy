@@ -4,7 +4,9 @@ namespace Tests\Feature\Admin\Auth;
 
 use App\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 /**
@@ -13,6 +15,21 @@ use Tests\TestCase;
 class ConfirmPasswordControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Route::name('admin.password.protected')
+            ->middleware([
+                'web',
+                'admin.auth:admin',
+                'admin.password.confirm',
+            ])
+            ->get('admin/protected', function (Request $request) {
+                return response('Admins must confirm their password before reading this.');
+            });
+    }
 
     public function test_cant_visit_confirm_password_when_not_authenticated()
     {

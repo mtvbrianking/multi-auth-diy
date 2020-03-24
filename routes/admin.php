@@ -3,10 +3,6 @@
 Route::group(['namespace' => 'Admin'], function () {
     Route::get('/', 'HomeController@index')->name('admin.home');
 
-    Route::get('/protected', function () {
-        return response('Admins must confirm their password before reading this...');
-    })->name('admin.password.protected')->middleware(['admin.auth', 'admin.password.confirm']);
-
     // Login
     Route::get('login', 'Auth\LoginController@showLoginForm')->name('admin.login');
     Route::post('login', 'Auth\LoginController@login');

@@ -2,13 +2,15 @@
 
 namespace Tests\Feature\Auth;
 
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
+use Tests\Models\User;
 use Tests\TestCase;
 
 /**
@@ -17,6 +19,23 @@ use Tests\TestCase;
 class VerificationControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->app->make(Factory::class)->load(__DIR__.'/../../factories');
+
+        Route::name('admin.verified')
+            ->middleware([
+                'web',
+                'auth',
+                'verified',
+            ])
+            ->get('admin/verified', function () {
+                return response('Accessed a resource that requires verification.');
+            });
+    }
 
     protected function validVerificationVerifyRoute(User $user)
     {
