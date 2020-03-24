@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
@@ -17,6 +18,52 @@ use Tests\TestCase;
 class VerificationControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Route::name('admin.verified')
+            ->middleware(['admin.auth:admin', 'admin.verified'])
+            ->get('admin/verified', function() {
+                return response('Accessed a resource that requires verification.');
+            });
+    }
+
+    public function test_verification_is_not_required_if_already_verified()
+    {
+        $admin = factory(Admin::class)->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.verified'));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_verification_is_required_if_not_verified()
+    {
+        $admin = factory(Admin::class)->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.verified'));
+
+        $response->assertRedirect(route('admin.verification.notice'));
+    }
+
+    public function test_verification_is_required_if_not_verified_json()
+    {
+        $admin = factory(Admin::class)->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')
+            ->withHeader('Accept', 'application/json')
+            ->get(route('admin.verified'));
+
+        $response->assertStatus(403);
+    }
 
     protected function validVerificationVerifyRoute(Admin $admin)
     {
