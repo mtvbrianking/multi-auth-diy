@@ -55,6 +55,7 @@ class Kernel extends HttpKernel
         'admin.auth' => \App\Http\Middleware\RedirectIfNotAdmin::class,
         'admin.guest' => \App\Http\Middleware\RedirectIfAdmin::class,
         'admin.verified' => \App\Http\Middleware\EnsureAdminEmailIsVerified::class,
+        'admin.password.confirm' => \App\Http\Middleware\RequireAdminPassword::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
