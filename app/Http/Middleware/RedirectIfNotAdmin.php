@@ -11,12 +11,13 @@ class RedirectIfNotAdmin
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string  $guard
-     * @return mixed
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     * @param string                   $guard
      *
      * @throws \Illuminate\Auth\AuthenticationException
+     *
+     * @return mixed
      */
     public function handle($request, Closure $next, $guard = 'admin')
     {
@@ -27,7 +28,9 @@ class RedirectIfNotAdmin
         $redirectToRoute = $request->expectsJson() ? '' : 'admin/login';
 
         throw new AuthenticationException(
-            'Unauthenticated.', [$guard], $redirectToRoute
+            'Unauthenticated.',
+            [$guard],
+            $redirectToRoute
         );
     }
 }

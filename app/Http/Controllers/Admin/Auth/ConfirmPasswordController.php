@@ -51,7 +51,8 @@ class ConfirmPasswordController extends Controller
     /**
      * Reset the password confirmation timeout.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return void
      */
     protected function resetPasswordConfirmationTimeout(Request $request)

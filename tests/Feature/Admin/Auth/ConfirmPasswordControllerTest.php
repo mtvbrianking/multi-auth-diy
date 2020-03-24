@@ -3,11 +3,8 @@
 namespace Tests\Feature\Admin\Auth;
 
 use App\Admin;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 /**
@@ -44,7 +41,7 @@ class ConfirmPasswordControllerTest extends TestCase
         $response->assertStatus(423);
 
         $response->assertJson([
-            'message' => 'Password confirmation required.'
+            'message' => 'Password confirmation required.',
         ]);
     }
 

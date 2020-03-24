@@ -1,13 +1,23 @@
+# https://styleci.readme.io/docs/presets#section-laravel
+
 preset: laravel
 
+# https://docs.styleci.io/standalone-php#risky
 risky: false
 
+enabled:
+  # - single_quote
+  # - phpdoc_summary
+
 disabled:
-  - unused_use
+  # - self_accessor
 
 finder:
+  exclude:
+    - "docs"
+    - "public"
+    - "resources"
   name:
     - "*.php"
   not-name:
-    - index.php
-    - server.php
+    - "*blade.php"

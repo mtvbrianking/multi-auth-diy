@@ -25,7 +25,7 @@ class VerificationControllerTest extends TestCase
 
         Route::name('admin.verified')
             ->middleware(['admin.auth:admin', 'admin.verified'])
-            ->get('admin/verified', function() {
+            ->get('admin/verified', function () {
                 return response('Accessed a resource that requires verification.');
             });
     }

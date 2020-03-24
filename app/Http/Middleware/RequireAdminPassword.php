@@ -25,8 +25,9 @@ class RequireAdminPassword
     /**
      * Create a new middleware instance.
      *
-     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $responseFactory
-     * @param  \Illuminate\Contracts\Routing\UrlGenerator  $urlGenerator
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $responseFactory
+     * @param \Illuminate\Contracts\Routing\UrlGenerator    $urlGenerator
+     *
      * @return void
      */
     public function __construct(ResponseFactory $responseFactory, UrlGenerator $urlGenerator)
@@ -38,9 +39,10 @@ class RequireAdminPassword
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $redirectToRoute
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     * @param string|null              $redirectToRoute
+     *
      * @return mixed
      */
     public function handle($request, Closure $next, $redirectToRoute = null)
@@ -63,7 +65,8 @@ class RequireAdminPassword
     /**
      * Determine if the confirmation timeout has expired.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return bool
      */
     protected function shouldConfirmPassword($request)
