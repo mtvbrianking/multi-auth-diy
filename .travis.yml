@@ -23,7 +23,7 @@ jobs:
       before_script:
         - travis_retry composer self-update
         - travis_retry composer update --prefer-lowest --no-ansi --no-interaction --no-progress --no-scripts
-        - php artisan migrate:fresh --database=travis_ci --quiet
+        - php artisan migrate:fresh --database=travis_ci
         - vendor/bin/phpunit --dump-xdebug-filter xdebug-filter.php
 
       script:
