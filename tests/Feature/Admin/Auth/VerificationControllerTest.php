@@ -5,7 +5,7 @@ namespace Tests\Feature\Admin\Auth;
 use App\Notifications\Admin\Auth\VerifyEmail;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +18,7 @@ use Tests\TestCase;
  */
 class VerificationControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {

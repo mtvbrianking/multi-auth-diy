@@ -3,7 +3,7 @@
 namespace Tests\Feature\Admin\Auth;
 
 use App\Admin;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -13,7 +13,7 @@ use Tests\TestCase;
  */
 class LoginControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_cant_visit_login_when_authenticated()
     {
