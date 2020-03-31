@@ -4,7 +4,7 @@ namespace Tests\Feature\Admin\Auth;
 
 use App\Admin;
 use App\Notifications\Admin\Auth\ResetPassword;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -15,7 +15,7 @@ use Tests\TestCase;
  */
 class ForgotPasswordControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_cant_visit_forgot_password_when_authenticated()
     {

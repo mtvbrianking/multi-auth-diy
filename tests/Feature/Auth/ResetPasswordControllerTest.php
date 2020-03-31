@@ -4,7 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\User;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -15,7 +15,7 @@ use Tests\TestCase;
  */
 class ResetPasswordControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function getResetToken($user)
     {

@@ -1,5 +1,11 @@
 language: php
 
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE travis_mysql_test_db;'
+
 cache:
   directories:
     - $HOME/.composer/cache/files
@@ -16,11 +22,11 @@ jobs:
 
       before_script:
         - travis_retry composer self-update
-        - travis_retry composer update --prefer-lowest --no-ansi --no-interaction --no-progress --no-scripts
+        - travis_retry composer update --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+        - php artisan migrate:fresh --database=travis_ci --force
         - vendor/bin/phpunit --dump-xdebug-filter xdebug-filter.php
 
       script:
-        # - vendor/bin/phpunit --prepend xdebug-filter.php --coverage-html coverage
         - vendor/bin/phpunit --prepend xdebug-filter.php --coverage-text --coverage-clover=coverage.clover
 
       after_script:
