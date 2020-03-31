@@ -111,12 +111,12 @@ return [
             ]) : [],
         ],
 
-        'travis-ci' => [
+        'travis_ci' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'travis-mysql-test-db'),
+            'database' => env('DB_DATABASE', 'travis_mysql_test_db'),
             'username' => env('DB_USERNAME', 'root'),
             'password' => env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),

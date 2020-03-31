@@ -4,7 +4,7 @@ services:
   - mysql
 
 before_install:
-  - mysql -e 'CREATE DATABASE travis-mysql-test-db;'
+  - mysql -e 'CREATE DATABASE travis_mysql_test_db;'
 
 cache:
   directories:
@@ -23,7 +23,7 @@ jobs:
       before_script:
         - travis_retry composer self-update
         - travis_retry composer update --prefer-lowest --no-ansi --no-interaction --no-progress --no-scripts
-        - php artisan migrate:fresh --database=travis-ci --quiet
+        - php artisan migrate:fresh --database=travis_ci --quiet
         - vendor/bin/phpunit --dump-xdebug-filter xdebug-filter.php
 
       script:
