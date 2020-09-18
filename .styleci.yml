@@ -17,3 +17,5 @@ finder:
     - "*.php"
   not-name:
     - "*blade.php"
+    - index.php
+    - server.php
