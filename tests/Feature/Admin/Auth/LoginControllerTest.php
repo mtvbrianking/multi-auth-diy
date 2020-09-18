@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Admin;
+use App\Models\Admin;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +17,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_visit_login_when_authenticated()
     {
-        $admin = factory(Admin::class)->make();
+        $admin = Admin::factory()->make();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.login'));
 
@@ -34,7 +34,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_login_with_invalid_email()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -52,7 +52,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_login_with_invalid_password()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -70,7 +70,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_make_more_than_five_failed_login_attempts_a_minute()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -103,7 +103,7 @@ class LoginControllerTest extends TestCase
     {
         $password = 'gJrFhC2B-!Y!4CTk';
 
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make($password),
         ]);
 
@@ -126,7 +126,7 @@ class LoginControllerTest extends TestCase
     {
         $password = 'gJrFhC2B-!Y!4CTk';
 
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make($password),
         ]);
 
@@ -157,7 +157,7 @@ class LoginControllerTest extends TestCase
 
     public function test_can_logout_if_authenticated()
     {
-        $this->be(factory(Admin::class)->create());
+        $this->be(Admin::factory()->create());
 
         $response = $this->post(route('admin.logout'));
 

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +17,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_visit_login_when_authenticated()
     {
-        $user = factory(User::class)->make();
+        $user = User::factory()->make();
 
         $response = $this->actingAs($user)->get(route('login'));
 
@@ -34,7 +34,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_login_with_invalid_email()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -52,7 +52,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_login_with_invalid_password()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -70,7 +70,7 @@ class LoginControllerTest extends TestCase
 
     public function test_cant_make_more_than_five_failed_login_attempts_a_minute()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -103,7 +103,7 @@ class LoginControllerTest extends TestCase
     {
         $password = 'gJrFhC2B-!Y!4CTk';
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make($password),
         ]);
 
@@ -126,7 +126,7 @@ class LoginControllerTest extends TestCase
     {
         $password = 'gJrFhC2B-!Y!4CTk';
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make($password),
         ]);
 
@@ -157,7 +157,7 @@ class LoginControllerTest extends TestCase
 
     public function test_can_logout_if_authenticated()
     {
-        $this->be(factory(User::class)->create());
+        $this->be(User::factory()->create());
 
         $response = $this->post(route('logout'));
 

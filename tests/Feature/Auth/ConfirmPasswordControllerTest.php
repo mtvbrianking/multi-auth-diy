@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -40,7 +40,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_can_visit_confirm_password_when_authenticated()
     {
-        $user = factory(User::class)->make();
+        $user = User::factory()->make();
 
         $response = $this->actingAs($user)->get(route('password.protected'));
 
@@ -49,7 +49,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_cant_confirm_with_invalid_password()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -65,7 +65,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_can_confirm_with_valid_password()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -85,7 +85,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
         $this->app['config']->set('auth.password_timeout', 100);
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -102,7 +102,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
         $this->app['config']->set('auth.password_timeout', 10);
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 

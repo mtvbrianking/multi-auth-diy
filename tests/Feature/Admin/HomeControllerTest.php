@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Admin;
-use App\User;
+use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -23,7 +23,7 @@ class HomeControllerTest extends TestCase
 
     public function test_can_visit_home_if_authenticated()
     {
-        $admin = factory(Admin::class)->create();
+        $admin = Admin::factory()->create();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.home'));
 
@@ -32,7 +32,7 @@ class HomeControllerTest extends TestCase
 
     public function test_can_non_admins_cant_access_dashboard()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $response = $this->actingAs($user, 'web')->get(route('admin.home'));
 

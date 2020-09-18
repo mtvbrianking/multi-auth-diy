@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use App\Admin;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -62,7 +62,7 @@ class RegisterController extends Controller
      *
      * @param array $data
      *
-     * @return \App\Admin
+     * @return \App\Models\Admin
      */
     protected function create(array $data)
     {

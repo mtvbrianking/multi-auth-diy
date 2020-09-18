@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Admin;
+use App\Models\Admin;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -40,7 +40,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_can_visit_confirm_password_when_authenticated()
     {
-        $admin = factory(Admin::class)->make();
+        $admin = Admin::factory()->make();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.password.protected'));
 
@@ -49,7 +49,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_can_visit_confirm_password_when_authenticated_json()
     {
-        $admin = factory(Admin::class)->make();
+        $admin = Admin::factory()->make();
 
         $response = $this->actingAs($admin, 'admin')
             ->withHeader('Accept', 'application/json')
@@ -64,7 +64,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_shows_admin_confirm_password_page()
     {
-        $admin = factory(Admin::class)->make();
+        $admin = Admin::factory()->make();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.password.confirm'));
 
@@ -73,7 +73,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_cant_confirm_with_invalid_password()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -89,7 +89,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
     public function test_can_confirm_with_valid_password()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -109,7 +109,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
         $this->app['config']->set('auth.password_timeout', 100);
 
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 
@@ -126,7 +126,7 @@ class ConfirmPasswordControllerTest extends TestCase
 
         $this->app['config']->set('auth.password_timeout', 10);
 
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
         ]);
 

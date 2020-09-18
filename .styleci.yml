@@ -5,12 +5,8 @@ preset: laravel
 # https://docs.styleci.io/standalone-php#risky
 risky: false
 
-enabled:
-  # - single_quote
-  # - phpdoc_summary
-
 disabled:
-  # - self_accessor
+  - unused_use
 
 finder:
   exclude:

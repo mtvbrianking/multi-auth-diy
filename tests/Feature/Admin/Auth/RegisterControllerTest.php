@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Admin;
+use App\Models\Admin;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -19,7 +19,7 @@ class RegisterControllerTest extends TestCase
 
     public function test_cant_visit_register_when_authenticated()
     {
-        $admin = factory(Admin::class)->make();
+        $admin = Admin::factory()->make();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.register'));
 

@@ -2,15 +2,14 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use Tests\Models\User;
 use Tests\TestCase;
 
 /**
@@ -23,8 +22,6 @@ class VerificationControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->app->make(Factory::class)->load(__DIR__.'/../../factories');
 
         Route::name('admin.verified')
             ->middleware([
@@ -70,7 +67,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_notice_when_already_verified()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -81,7 +78,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_can_visit_email_verification_when_not_verified()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -94,7 +91,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_when_unauthenticated()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -105,11 +102,11 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_impersonating_other_users()
     {
-        $user_1 = factory(User::class)->create([
+        $user_1 = User::factory()->create([
             'email_verified_at' => null,
         ]);
 
-        $user_2 = factory(User::class)->create([
+        $user_2 = User::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -122,7 +119,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_when_verified()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -133,7 +130,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_verify_email_with_invalid_signature()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -144,7 +141,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_can_verify_email_with_valid_signature()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -164,7 +161,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_resend_email_verification_when_already_verified()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -176,7 +173,7 @@ class VerificationControllerTest extends TestCase
     public function test_can_request_resend_email_verification_link()
     {
         Notification::fake();
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email_verified_at' => null,
         ]);
 

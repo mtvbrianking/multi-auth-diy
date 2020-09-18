@@ -2,15 +2,14 @@
 
 namespace Tests\Feature\Admin\Auth;
 
+use App\Models\Admin;
 use App\Notifications\Admin\Auth\VerifyEmail;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
-use Tests\Models\Admin;
 use Tests\TestCase;
 
 /**
@@ -23,8 +22,6 @@ class VerificationControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->app->make(Factory::class)->load(__DIR__.'/../../../factories');
 
         Route::name('admin.verified')
             ->middleware([
@@ -39,7 +36,9 @@ class VerificationControllerTest extends TestCase
 
     public function test_verification_is_not_required_if_already_verified()
     {
-        $admin = factory(Admin::class)->create([
+        $this->withoutExceptionHandling();
+
+        $admin = Admin::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -50,7 +49,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_verification_is_required_if_not_verified()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -61,7 +60,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_verification_is_required_if_not_verified_json()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -105,7 +104,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_notice_when_already_verified()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -116,7 +115,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_can_visit_email_verification_when_not_verified()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -129,7 +128,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_when_unauthenticated()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -140,11 +139,11 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_impersonating_other_users()
     {
-        $admin_1 = factory(Admin::class)->create([
+        $admin_1 = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 
-        $admin_2 = factory(Admin::class)->create([
+        $admin_2 = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -157,7 +156,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_email_verification_when_verified()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -168,7 +167,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_verify_email_with_invalid_signature()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -179,7 +178,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_can_verify_email_with_valid_signature()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 
@@ -199,7 +198,7 @@ class VerificationControllerTest extends TestCase
 
     public function test_cant_visit_resend_email_verification_when_already_verified()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => now(),
         ]);
 
@@ -211,7 +210,7 @@ class VerificationControllerTest extends TestCase
     public function test_can_request_resend_email_verification_link()
     {
         Notification::fake();
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email_verified_at' => null,
         ]);
 

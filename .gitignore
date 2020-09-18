@@ -12,5 +12,4 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 phpunit.xml
-xdebug-filter.php
 yarn-error.log

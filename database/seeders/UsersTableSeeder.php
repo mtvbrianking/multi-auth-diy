@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
@@ -17,7 +20,6 @@ class UsersTableSeeder extends Seeder
         $user->email = 'jdoe@example.com';
         $user->email_verified_at = date('Y-m-d H:i:s');
         $user->password = Hash::make('123456');
-
         $user->save();
     }
 }

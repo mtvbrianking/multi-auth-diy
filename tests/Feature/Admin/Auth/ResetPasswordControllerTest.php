@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Admin;
+use App\Models\Admin;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
@@ -24,7 +24,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_visit_reset_password_when_authenticated()
     {
-        $admin = factory(Admin::class)->create();
+        $admin = Admin::factory()->create();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.password.reset', $this->getResetToken($admin)));
 
@@ -33,7 +33,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_can_visit_reset_password_when_unauthenticated()
     {
-        $admin = factory(Admin::class)->create();
+        $admin = Admin::factory()->create();
 
         $reset_token = $this->getResetToken($admin);
 
@@ -46,7 +46,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_reset_password_with_invalid_token()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('old-password'),
         ]);
 
@@ -65,7 +65,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_reset_password_with_invalid_email()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('old-password'),
         ]);
 
@@ -88,7 +88,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_reset_password_with_invalid_password()
     {
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'password' => Hash::make('old-password'),
         ]);
 
@@ -114,7 +114,7 @@ class ResetPasswordControllerTest extends TestCase
     {
         Event::fake();
 
-        $admin = factory(Admin::class)->create();
+        $admin = Admin::factory()->create();
 
         $reset_token = $this->getResetToken($admin);
 

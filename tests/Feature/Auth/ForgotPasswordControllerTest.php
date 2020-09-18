@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +19,7 @@ class ForgotPasswordControllerTest extends TestCase
 
     public function test_cant_visit_forgot_password_when_authenticated()
     {
-        $user = factory(User::class)->make();
+        $user = User::factory()->make();
 
         $response = $this->actingAs($user)->get(route('password.request'));
 
@@ -44,7 +44,7 @@ class ForgotPasswordControllerTest extends TestCase
 
         $response->assertRedirect(route('password.email'));
         $response->assertSessionHasErrors('email');
-        Notification::assertNotSentTo(factory(User::class)->make(['email' => 'nobody@example.com']), ResetPassword::class);
+        Notification::assertNotSentTo(User::factory()->make(['email' => 'nobody@example.com']), ResetPassword::class);
     }
 
     public function test_cant_send_password_reset_email_with_invalid_email_provided()
@@ -60,7 +60,7 @@ class ForgotPasswordControllerTest extends TestCase
     public function test_can_send_email_with_password_reset_link_to_registered_users()
     {
         Notification::fake();
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'email' => 'jdoe@example.com',
         ]);
 

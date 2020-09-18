@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Admin;
+use App\Models\Admin;
 use App\Notifications\Admin\Auth\ResetPassword;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +19,7 @@ class ForgotPasswordControllerTest extends TestCase
 
     public function test_cant_visit_forgot_password_when_authenticated()
     {
-        $admin = factory(Admin::class)->make();
+        $admin = Admin::factory()->make();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.password.request'));
 
@@ -46,7 +46,7 @@ class ForgotPasswordControllerTest extends TestCase
 
         $response->assertRedirect(route('admin.password.email'));
         $response->assertSessionHasErrors('email');
-        Notification::assertNotSentTo(factory(Admin::class)->make(['email' => 'nobody@example.com']), ResetPassword::class);
+        Notification::assertNotSentTo(Admin::factory()->make(['email' => 'nobody@example.com']), ResetPassword::class);
     }
 
     public function test_cant_send_password_reset_email_with_invalid_email_provided()
@@ -63,7 +63,7 @@ class ForgotPasswordControllerTest extends TestCase
     {
         Notification::fake();
 
-        $admin = factory(Admin::class)->create([
+        $admin = Admin::factory()->create([
             'email' => 'jdoe@example.com',
         ]);
 

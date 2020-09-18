@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
@@ -24,7 +24,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_visit_reset_password_when_authenticated()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get(route('password.reset', $this->getResetToken($user)));
 
@@ -33,7 +33,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_can_visit_reset_password_when_unauthenticated()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $reset_token = $this->getResetToken($user);
 
@@ -46,7 +46,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_reset_password_with_invalid_token()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('old-password'),
         ]);
 
@@ -65,7 +65,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_reset_password_with_invalid_email()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('old-password'),
         ]);
 
@@ -88,7 +88,7 @@ class ResetPasswordControllerTest extends TestCase
 
     public function test_cant_reset_password_with_invalid_password()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'password' => Hash::make('old-password'),
         ]);
 
@@ -111,7 +111,7 @@ class ResetPasswordControllerTest extends TestCase
     public function test_can_reset_password_with_valid_token()
     {
         Event::fake();
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $response = $this->post(route('password.update'), [
             'token' => $this->getResetToken($user),
