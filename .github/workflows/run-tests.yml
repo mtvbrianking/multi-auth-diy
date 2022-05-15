@@ -60,7 +60,7 @@ jobs:
 
       - name: Generate application encryption key
         run: |
-          cp .env.example .env.testing
+          cp .env.example .env
           php artisan key:generate
 
       # - name: Debug MySQL DB CONNECTION
