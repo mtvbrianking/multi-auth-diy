@@ -1,0 +1,72 @@
+name: run-tests
+
+# on:
+#   workflow_dispatch:
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: M4yLEJyZuGF4B3JF
+          MYSQL_DATABASE: multi_auth_diy_tests
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.1, 8.0]
+        laravel: [^8.0]
+    
+    name: TESTS PHP ${{ matrix.php }} LARAVEL ${{ matrix.laravel }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, pcov
+          tools: composer:v2
+          # coverage: pcov
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-progress --no-update
+          composer update --prefer-dist --no-interaction --no-progress
+
+      # https://blog.shaharia.com/github-actions-workflows-ci-for-php-developer
+      - name: Execute tests, generate code coverage report
+        env:
+          DB_CONNECTION: tests
+          DB_TEST_HOST: 127.0.0.1
+          DB_TEST_PORT: 3306
+          DB_TEST_DATABASE: multi_auth_diy_tests
+          DB_TEST_USERNAME: root
+          DB_TEST_PASSWORD: M4yLEJyZuGF4B3JF
+        run: |
+          php artisan migrate:fresh --database=tests --quiet
+          vendor/bin/phpunit
