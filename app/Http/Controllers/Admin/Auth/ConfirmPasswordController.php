@@ -62,7 +62,7 @@ class ConfirmPasswordController extends Controller
     protected function rules()
     {
         return [
-            'password' => 'required|password:admin',
+            'password' => 'required|current_password:admin',
         ];
     }
 }

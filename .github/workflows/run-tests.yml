@@ -27,8 +27,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.1, 7.4]
-        laravel: [^8.0]
+        php: [8.1]
+        laravel: [^9.0]
     
     name: TESTS PHP ${{ matrix.php }} LARAVEL ${{ matrix.laravel }}
     
