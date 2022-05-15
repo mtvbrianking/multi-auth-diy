@@ -12,12 +12,15 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\RegisterController
+ *
+ * @internal
+ * @coversNothing
  */
-class RegisterControllerTest extends TestCase
+final class RegisterControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_cant_visit_register_when_authenticated()
+    public function testCantVisitRegisterWhenAuthenticated()
     {
         $user = User::factory()->make();
 
@@ -26,7 +29,7 @@ class RegisterControllerTest extends TestCase
         $response->assertRedirect(route('home'));
     }
 
-    public function test_can_visit_register_when_not_authenticated()
+    public function testCanVisitRegisterWhenNotAuthenticated()
     {
         $response = $this->get(route('register'));
 
@@ -34,7 +37,7 @@ class RegisterControllerTest extends TestCase
         $response->assertViewIs('auth.register');
     }
 
-    public function test_cant_register_with_invalid_name()
+    public function testCantRegisterWithInvalidName()
     {
         $response = $this->from(route('register'))->post(route('register'), [
             'name' => '',
@@ -45,15 +48,15 @@ class RegisterControllerTest extends TestCase
 
         $users = User::all();
 
-        $this->assertCount(0, $users);
+        static::assertCount(0, $users);
         $response->assertRedirect(route('register'));
         $response->assertSessionHasErrors('name');
-        $this->assertTrue(session()->hasOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertTrue(session()->hasOldInput('email'));
+        static::assertFalse(session()->hasOldInput('password'));
         $this->assertGuest();
     }
 
-    public function test_cant_register_with_invalid_email()
+    public function testCantRegisterWithInvalidEmail()
     {
         $response = $this->from(route('register'))->post(route('register'), [
             'name' => 'John Doe',
@@ -64,15 +67,15 @@ class RegisterControllerTest extends TestCase
 
         $users = User::all();
 
-        $this->assertCount(0, $users);
+        static::assertCount(0, $users);
         $response->assertRedirect(route('register'));
         $response->assertSessionHasErrors('email');
-        $this->assertTrue(session()->hasOldInput('name'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertTrue(session()->hasOldInput('name'));
+        static::assertFalse(session()->hasOldInput('password'));
         $this->assertGuest();
     }
 
-    public function test_cant_register_with_invalid_password()
+    public function testCantRegisterWithInvalidPassword()
     {
         $response = $this->from(route('register'))->post(route('register'), [
             'name' => 'John Doe',
@@ -83,16 +86,16 @@ class RegisterControllerTest extends TestCase
 
         $users = User::all();
 
-        $this->assertCount(0, $users);
+        static::assertCount(0, $users);
         $response->assertRedirect(route('register'));
         $response->assertSessionHasErrors('password');
-        $this->assertTrue(session()->hasOldInput('name'));
-        $this->assertTrue(session()->hasOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertTrue(session()->hasOldInput('name'));
+        static::assertTrue(session()->hasOldInput('email'));
+        static::assertFalse(session()->hasOldInput('password'));
         $this->assertGuest();
     }
 
-    public function test_cant_register_with_non_matched_passwords()
+    public function testCantRegisterWithNonMatchedPasswords()
     {
         $response = $this->from(route('register'))->post(route('register'), [
             'name' => 'John Doe',
@@ -103,19 +106,19 @@ class RegisterControllerTest extends TestCase
 
         $users = User::all();
 
-        $this->assertCount(0, $users);
+        static::assertCount(0, $users);
         $response->assertRedirect(route('register'));
         $response->assertSessionHasErrors('password');
-        $this->assertTrue(session()->hasOldInput('name'));
-        $this->assertTrue(session()->hasOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertTrue(session()->hasOldInput('name'));
+        static::assertTrue(session()->hasOldInput('email'));
+        static::assertFalse(session()->hasOldInput('password'));
         $this->assertGuest();
     }
 
     /**
      * @see https://github.com/laravel/framework/issues/18066#issuecomment-342630971 Issue 18066
      */
-    public function test_can_register_with_valid_info()
+    public function testCanRegisterWithValidInfo()
     {
         $this->withoutExceptionHandling();
 
@@ -132,11 +135,11 @@ class RegisterControllerTest extends TestCase
         ]);
 
         $response->assertRedirect(route('home'));
-        $this->assertCount(1, $users = User::all());
+        static::assertCount(1, $users = User::all());
         $this->assertAuthenticatedAs($user = $users->first());
-        $this->assertEquals('John Doe', $user->name);
-        $this->assertEquals('jdoe@example.com', $user->email);
-        $this->assertTrue(Hash::check('gJrFhC2B-!Y!4CTk', $user->password));
+        static::assertSame('John Doe', $user->name);
+        static::assertSame('jdoe@example.com', $user->email);
+        static::assertTrue(Hash::check('gJrFhC2B-!Y!4CTk', $user->password));
         Event::assertDispatched(Registered::class, function ($e) use ($user) {
             return $e->user->id === $user->id;
         });

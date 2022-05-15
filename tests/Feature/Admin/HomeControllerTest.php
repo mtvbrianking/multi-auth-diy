@@ -9,19 +9,22 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\HomeController
+ *
+ * @internal
+ * @coversNothing
  */
-class HomeControllerTest extends TestCase
+final class HomeControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_cant_visit_home_unauthenticated()
+    public function testCantVisitHomeUnauthenticated()
     {
         $response = $this->get(route('admin.home'));
         $response->assertStatus(302);
         $response->assertRedirect(route('admin.login'));
     }
 
-    public function test_can_visit_home_if_authenticated()
+    public function testCanVisitHomeIfAuthenticated()
     {
         $admin = Admin::factory()->create();
 
@@ -30,7 +33,7 @@ class HomeControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_can_non_admins_cant_access_dashboard()
+    public function testCanNonAdminsCantAccessDashboard()
     {
         $user = User::factory()->create();
 

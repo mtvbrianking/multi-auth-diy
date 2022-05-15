@@ -14,8 +14,11 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\Auth\VerificationController
+ *
+ * @internal
+ * @coversNothing
  */
-class VerificationControllerTest extends TestCase
+final class VerificationControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -31,10 +34,11 @@ class VerificationControllerTest extends TestCase
             ])
             ->get('admin/verified', function () {
                 return response('Accessed a resource that requires verification.');
-            });
+            })
+        ;
     }
 
-    public function test_verification_is_not_required_if_already_verified()
+    public function testVerificationIsNotRequiredIfAlreadyVerified()
     {
         $this->withoutExceptionHandling();
 
@@ -47,7 +51,7 @@ class VerificationControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_verification_is_required_if_not_verified()
+    public function testVerificationIsRequiredIfNotVerified()
     {
         $admin = Admin::factory()->create([
             'email_verified_at' => null,
@@ -58,7 +62,7 @@ class VerificationControllerTest extends TestCase
         $response->assertRedirect(route('admin.verification.notice'));
     }
 
-    public function test_verification_is_required_if_not_verified_json()
+    public function testVerificationIsRequiredIfNotVerifiedJson()
     {
         $admin = Admin::factory()->create([
             'email_verified_at' => null,
@@ -66,9 +70,139 @@ class VerificationControllerTest extends TestCase
 
         $response = $this->actingAs($admin, 'admin')
             ->withHeader('Accept', 'application/json')
-            ->get(route('admin.verified'));
+            ->get(route('admin.verified'))
+        ;
 
         $response->assertStatus(403);
+    }
+
+    public function testCantVisitEmailVerificationNoticeWhenUnauthenticated()
+    {
+        $response = $this->get(route('admin.verification.notice'));
+
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    public function testCantVisitEmailVerificationNoticeWhenAlreadyVerified()
+    {
+        $admin = Admin::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.verification.notice'));
+
+        $response->assertRedirect(route('admin.home'));
+    }
+
+    public function testCanVisitEmailVerificationWhenNotVerified()
+    {
+        $admin = Admin::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.verification.notice'));
+
+        $response->assertStatus(200);
+
+        $response->assertViewIs('admin.auth.verify');
+    }
+
+    public function testCantVisitEmailVerificationWhenUnauthenticated()
+    {
+        $admin = Admin::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->get($this->validVerificationVerifyRoute($admin));
+
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    public function testCantVisitEmailVerificationImpersonatingOtherUsers()
+    {
+        $admin_1 = Admin::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $admin_2 = Admin::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin_1, 'admin')->get($this->validVerificationVerifyRoute($admin_2));
+
+        $response->assertForbidden();
+
+        static::assertFalse($admin_2->fresh()->hasVerifiedEmail());
+    }
+
+    public function testCantVisitEmailVerificationWhenVerified()
+    {
+        $admin = Admin::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get($this->validVerificationVerifyRoute($admin));
+
+        $response->assertRedirect(route('admin.home'));
+    }
+
+    public function testCantVerifyEmailWithInvalidSignature()
+    {
+        $admin = Admin::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get($this->invalidVerificationVerifyRoute($admin));
+
+        $response->assertStatus(403);
+    }
+
+    public function testCanVerifyEmailWithValidSignature()
+    {
+        $admin = Admin::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->get($this->validVerificationVerifyRoute($admin));
+
+        $response->assertRedirect(route('admin.home'));
+
+        static::assertNotNull($admin->fresh()->email_verified_at);
+    }
+
+    public function testCantRequestResendEmailVerificationLinkWhenUnauthenticated()
+    {
+        $response = $this->post(route('admin.verification.resend'));
+
+        $response->assertRedirect(route('admin.login'));
+    }
+
+    public function testCantVisitResendEmailVerificationWhenAlreadyVerified()
+    {
+        $admin = Admin::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.verification.resend'));
+
+        $response->assertRedirect(route('admin.home'));
+    }
+
+    public function testCanRequestResendEmailVerificationLink()
+    {
+        Notification::fake();
+        $admin = Admin::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')
+            ->from(route('admin.verification.notice'))
+            ->post(route('admin.verification.resend'))
+        ;
+
+        Notification::assertSentTo($admin, VerifyEmail::class);
+
+        $response->assertRedirect(route('admin.verification.notice'));
     }
 
     protected function validVerificationVerifyRoute(Admin $admin)
@@ -93,133 +227,5 @@ class VerificationControllerTest extends TestCase
                 'hash' => 'invalid-signature',
             ]
         );
-    }
-
-    public function test_cant_visit_email_verification_notice_when_unauthenticated()
-    {
-        $response = $this->get(route('admin.verification.notice'));
-
-        $response->assertRedirect(route('admin.login'));
-    }
-
-    public function test_cant_visit_email_verification_notice_when_already_verified()
-    {
-        $admin = Admin::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')->get(route('admin.verification.notice'));
-
-        $response->assertRedirect(route('admin.home'));
-    }
-
-    public function test_can_visit_email_verification_when_not_verified()
-    {
-        $admin = Admin::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')->get(route('admin.verification.notice'));
-
-        $response->assertStatus(200);
-
-        $response->assertViewIs('admin.auth.verify');
-    }
-
-    public function test_cant_visit_email_verification_when_unauthenticated()
-    {
-        $admin = Admin::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->get($this->validVerificationVerifyRoute($admin));
-
-        $response->assertRedirect(route('admin.login'));
-    }
-
-    public function test_cant_visit_email_verification_impersonating_other_users()
-    {
-        $admin_1 = Admin::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $admin_2 = Admin::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($admin_1, 'admin')->get($this->validVerificationVerifyRoute($admin_2));
-
-        $response->assertForbidden();
-
-        $this->assertFalse($admin_2->fresh()->hasVerifiedEmail());
-    }
-
-    public function test_cant_visit_email_verification_when_verified()
-    {
-        $admin = Admin::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')->get($this->validVerificationVerifyRoute($admin));
-
-        $response->assertRedirect(route('admin.home'));
-    }
-
-    public function test_cant_verify_email_with_invalid_signature()
-    {
-        $admin = Admin::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')->get($this->invalidVerificationVerifyRoute($admin));
-
-        $response->assertStatus(403);
-    }
-
-    public function test_can_verify_email_with_valid_signature()
-    {
-        $admin = Admin::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')->get($this->validVerificationVerifyRoute($admin));
-
-        $response->assertRedirect(route('admin.home'));
-
-        $this->assertNotNull($admin->fresh()->email_verified_at);
-    }
-
-    public function test_cant_request_resend_email_verification_link_when_unauthenticated()
-    {
-        $response = $this->post(route('admin.verification.resend'));
-
-        $response->assertRedirect(route('admin.login'));
-    }
-
-    public function test_cant_visit_resend_email_verification_when_already_verified()
-    {
-        $admin = Admin::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')->post(route('admin.verification.resend'));
-
-        $response->assertRedirect(route('admin.home'));
-    }
-
-    public function test_can_request_resend_email_verification_link()
-    {
-        Notification::fake();
-        $admin = Admin::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')
-            ->from(route('admin.verification.notice'))
-            ->post(route('admin.verification.resend'));
-
-        Notification::assertSentTo($admin, VerifyEmail::class);
-
-        $response->assertRedirect(route('admin.verification.notice'));
     }
 }

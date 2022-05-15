@@ -11,7 +11,8 @@ use Illuminate\Notifications\Notifiable;
 
 class Admin extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -35,8 +36,6 @@ class Admin extends Authenticatable implements MustVerifyEmail
      * Send the password reset notification.
      *
      * @param string $token
-     *
-     * @return void
      */
     public function sendPasswordResetNotification($token)
     {
@@ -45,11 +44,9 @@ class Admin extends Authenticatable implements MustVerifyEmail
 
     /**
      * Send the email verification notification.
-     *
-     * @return void
      */
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new VerifyEmail);
+        $this->notify(new VerifyEmail());
     }
 }

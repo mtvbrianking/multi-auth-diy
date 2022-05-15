@@ -12,12 +12,15 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\Auth\ForgotPasswordController
+ *
+ * @internal
+ * @coversNothing
  */
-class ForgotPasswordControllerTest extends TestCase
+final class ForgotPasswordControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_cant_visit_forgot_password_when_authenticated()
+    public function testCantVisitForgotPasswordWhenAuthenticated()
     {
         $admin = Admin::factory()->make();
 
@@ -26,7 +29,7 @@ class ForgotPasswordControllerTest extends TestCase
         $response->assertRedirect(route('admin.home'));
     }
 
-    public function test_can_visit_forgot_password_when_not_authenticated()
+    public function testCanVisitForgotPasswordWhenNotAuthenticated()
     {
         $this->withoutExceptionHandling();
 
@@ -36,7 +39,7 @@ class ForgotPasswordControllerTest extends TestCase
         $response->assertViewIs('admin.auth.passwords.email');
     }
 
-    public function test_cant_send_password_reset_email_to_non_registered_users()
+    public function testCantSendPasswordResetEmailToNonRegisteredUsers()
     {
         Notification::fake();
 
@@ -49,7 +52,7 @@ class ForgotPasswordControllerTest extends TestCase
         Notification::assertNotSentTo(Admin::factory()->make(['email' => 'nobody@example.com']), ResetPassword::class);
     }
 
-    public function test_cant_send_password_reset_email_with_invalid_email_provided()
+    public function testCantSendPasswordResetEmailWithInvalidEmailProvided()
     {
         $response = $this->from(route('admin.password.email'))->post(route('admin.password.email'), [
             'email' => 'invalid-email',
@@ -59,7 +62,7 @@ class ForgotPasswordControllerTest extends TestCase
         $response->assertSessionHasErrors('email');
     }
 
-    public function test_can_send_email_with_password_reset_link_to_registered_users()
+    public function testCanSendEmailWithPasswordResetLinkToRegisteredUsers()
     {
         Notification::fake();
 
@@ -71,9 +74,9 @@ class ForgotPasswordControllerTest extends TestCase
             'email' => 'jdoe@example.com',
         ]);
 
-        $this->assertNotNull($token = DB::table('admin_password_resets')->first());
+        static::assertNotNull($token = DB::table('admin_password_resets')->first());
         Notification::assertSentTo($admin, ResetPassword::class, function ($notification, $channels) use ($token) {
-            return Hash::check($notification->token, $token->token) === true;
+            return true === Hash::check($notification->token, $token->token);
         });
     }
 }

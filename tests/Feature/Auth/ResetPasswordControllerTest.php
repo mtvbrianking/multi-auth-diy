@@ -12,17 +12,15 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\ResetPasswordController
+ *
+ * @internal
+ * @coversNothing
  */
-class ResetPasswordControllerTest extends TestCase
+final class ResetPasswordControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    protected function getResetToken($user)
-    {
-        return Password::broker()->createToken($user);
-    }
-
-    public function test_cant_visit_reset_password_when_authenticated()
+    public function testCantVisitResetPasswordWhenAuthenticated()
     {
         $user = User::factory()->create();
 
@@ -31,7 +29,7 @@ class ResetPasswordControllerTest extends TestCase
         $response->assertRedirect(route('home'));
     }
 
-    public function test_can_visit_reset_password_when_unauthenticated()
+    public function testCanVisitResetPasswordWhenUnauthenticated()
     {
         $user = User::factory()->create();
 
@@ -44,7 +42,7 @@ class ResetPasswordControllerTest extends TestCase
         $response->assertViewHas('token', $reset_token);
     }
 
-    public function test_cant_reset_password_with_invalid_token()
+    public function testCantResetPasswordWithInvalidToken()
     {
         $user = User::factory()->create([
             'password' => Hash::make('old-password'),
@@ -58,12 +56,12 @@ class ResetPasswordControllerTest extends TestCase
         ]);
 
         $response->assertRedirect(route('password.reset', 'invalid_token'));
-        $this->assertEquals($user->email, $user->fresh()->email);
-        $this->assertTrue(Hash::check('old-password', $user->fresh()->password));
+        static::assertSame($user->email, $user->fresh()->email);
+        static::assertTrue(Hash::check('old-password', $user->fresh()->password));
         $this->assertGuest();
     }
 
-    public function test_cant_reset_password_with_invalid_email()
+    public function testCantResetPasswordWithInvalidEmail()
     {
         $user = User::factory()->create([
             'password' => Hash::make('old-password'),
@@ -80,13 +78,13 @@ class ResetPasswordControllerTest extends TestCase
 
         $response->assertRedirect(route('password.reset', $reset_token));
         $response->assertSessionHasErrors('email');
-        $this->assertFalse(session()->hasOldInput('password'));
-        $this->assertEquals($user->email, $user->fresh()->email);
-        $this->assertTrue(Hash::check('old-password', $user->fresh()->password));
+        static::assertFalse(session()->hasOldInput('password'));
+        static::assertSame($user->email, $user->fresh()->email);
+        static::assertTrue(Hash::check('old-password', $user->fresh()->password));
         $this->assertGuest();
     }
 
-    public function test_cant_reset_password_with_invalid_password()
+    public function testCantResetPasswordWithInvalidPassword()
     {
         $user = User::factory()->create([
             'password' => Hash::make('old-password'),
@@ -101,14 +99,14 @@ class ResetPasswordControllerTest extends TestCase
 
         $response->assertRedirect(route('password.reset', $token));
         $response->assertSessionHasErrors('password');
-        $this->assertTrue(session()->hasOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
-        $this->assertEquals($user->email, $user->fresh()->email);
-        $this->assertTrue(Hash::check('old-password', $user->fresh()->password));
+        static::assertTrue(session()->hasOldInput('email'));
+        static::assertFalse(session()->hasOldInput('password'));
+        static::assertSame($user->email, $user->fresh()->email);
+        static::assertTrue(Hash::check('old-password', $user->fresh()->password));
         $this->assertGuest();
     }
 
-    public function test_can_reset_password_with_valid_token()
+    public function testCanResetPasswordWithValidToken()
     {
         Event::fake();
         $user = User::factory()->create();
@@ -121,11 +119,16 @@ class ResetPasswordControllerTest extends TestCase
         ]);
 
         $response->assertRedirect(route('home'));
-        $this->assertEquals($user->email, $user->fresh()->email);
-        $this->assertTrue(Hash::check('new-awesome-password', $user->fresh()->password));
+        static::assertSame($user->email, $user->fresh()->email);
+        static::assertTrue(Hash::check('new-awesome-password', $user->fresh()->password));
         $this->assertAuthenticatedAs($user);
         Event::assertDispatched(PasswordReset::class, function ($e) use ($user) {
             return $e->user->id === $user->id;
         });
+    }
+
+    protected function getResetToken($user)
+    {
+        return Password::broker()->createToken($user);
     }
 }

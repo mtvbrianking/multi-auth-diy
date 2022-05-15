@@ -11,8 +11,11 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\ConfirmPasswordController
+ *
+ * @internal
+ * @coversNothing
  */
-class ConfirmPasswordControllerTest extends TestCase
+final class ConfirmPasswordControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -28,17 +31,18 @@ class ConfirmPasswordControllerTest extends TestCase
             ])
             ->get('protected', function (Request $request) {
                 return response('Users must confirm their password before reading this.');
-            });
+            })
+        ;
     }
 
-    public function test_cant_visit_confirm_password_when_not_authenticated()
+    public function testCantVisitConfirmPasswordWhenNotAuthenticated()
     {
         $response = $this->get(route('password.protected'));
 
         $response->assertRedirect(route('login'));
     }
 
-    public function test_can_visit_confirm_password_when_authenticated()
+    public function testCanVisitConfirmPasswordWhenAuthenticated()
     {
         $user = User::factory()->make();
 
@@ -47,7 +51,7 @@ class ConfirmPasswordControllerTest extends TestCase
         $response->assertRedirect(route('password.confirm'));
     }
 
-    public function test_cant_confirm_with_invalid_password()
+    public function testCantConfirmWithInvalidPassword()
     {
         $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
@@ -57,13 +61,14 @@ class ConfirmPasswordControllerTest extends TestCase
             ->from(route('password.confirm'))
             ->post(route('password.confirm'), [
                 'password' => 'invalid-password',
-            ]);
+            ])
+        ;
 
         $response->assertRedirect(route('password.confirm'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertFalse(session()->hasOldInput('password'));
     }
 
-    public function test_can_confirm_with_valid_password()
+    public function testCanConfirmWithValidPassword()
     {
         $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
@@ -74,12 +79,13 @@ class ConfirmPasswordControllerTest extends TestCase
             ->from(route('password.confirm'))
             ->post(route('password.confirm'), [
                 'password' => 'gJrFhC2B-!Y!4CTk',
-            ]);
+            ])
+        ;
 
         $response->assertRedirect(route('home'));
     }
 
-    public function test_should_not_reconfirm_password_not_if_timed_out()
+    public function testShouldNotReconfirmPasswordNotIfTimedOut()
     {
         $this->app['session']->put('auth.password_confirmed_at', time());
 
@@ -94,7 +100,7 @@ class ConfirmPasswordControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_should_reconfirm_password_if_timed_out()
+    public function testShouldReconfirmPasswordIfTimedOut()
     {
         $passwordConfirmedAt = time() - 100;
 

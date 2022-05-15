@@ -30,8 +30,6 @@ class ConfirmPasswordController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -50,10 +48,6 @@ class ConfirmPasswordController extends Controller
 
     /**
      * Reset the password confirmation timeout.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return void
      */
     protected function resetPasswordConfirmationTimeout(Request $request)
     {

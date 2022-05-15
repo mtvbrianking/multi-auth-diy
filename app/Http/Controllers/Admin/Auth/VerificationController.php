@@ -32,8 +32,6 @@ class VerificationController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -44,8 +42,6 @@ class VerificationController extends Controller
 
     /**
      * Show the email verification notice.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -59,8 +55,6 @@ class VerificationController extends Controller
     /**
      * Mark the authenticated user's email address as verified.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      *
      * @return \Illuminate\Http\Response
@@ -68,11 +62,11 @@ class VerificationController extends Controller
     public function verify(Request $request)
     {
         if (! hash_equals((string) $request->route('id'), (string) $request->user('admin')->getKey())) {
-            throw new AuthorizationException;
+            throw new AuthorizationException();
         }
 
         if (! hash_equals((string) $request->route('hash'), sha1($request->user('admin')->getEmailForVerification()))) {
-            throw new AuthorizationException;
+            throw new AuthorizationException();
         }
 
         if ($request->user('admin')->hasVerifiedEmail()) {
@@ -88,8 +82,6 @@ class VerificationController extends Controller
 
     /**
      * Resend the email verification notification.
-     *
-     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */

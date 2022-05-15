@@ -10,12 +10,15 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\LoginController
+ *
+ * @internal
+ * @coversNothing
  */
-class LoginControllerTest extends TestCase
+final class LoginControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_cant_visit_login_when_authenticated()
+    public function testCantVisitLoginWhenAuthenticated()
     {
         $user = User::factory()->make();
 
@@ -24,7 +27,7 @@ class LoginControllerTest extends TestCase
         $response->assertRedirect(route('home'));
     }
 
-    public function test_can_visit_login_if_not_authenticated()
+    public function testCanVisitLoginIfNotAuthenticated()
     {
         $response = $this->get(route('login'));
 
@@ -32,7 +35,7 @@ class LoginControllerTest extends TestCase
         $response->assertViewIs('auth.login');
     }
 
-    public function test_cant_login_with_invalid_email()
+    public function testCantLoginWithInvalidEmail()
     {
         $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
@@ -45,12 +48,12 @@ class LoginControllerTest extends TestCase
 
         $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors('email');
-        $this->assertTrue(session()->hasOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertTrue(session()->hasOldInput('email'));
+        static::assertFalse(session()->hasOldInput('password'));
         $this->assertGuest();
     }
 
-    public function test_cant_login_with_invalid_password()
+    public function testCantLoginWithInvalidPassword()
     {
         $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
@@ -63,12 +66,12 @@ class LoginControllerTest extends TestCase
 
         $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors('email');
-        $this->assertTrue(session()->hasOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertTrue(session()->hasOldInput('email'));
+        static::assertFalse(session()->hasOldInput('password'));
         $this->assertGuest();
     }
 
-    public function test_cant_make_more_than_five_failed_login_attempts_a_minute()
+    public function testCantMakeMoreThanFiveFailedLoginAttemptsAMinute()
     {
         $user = User::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
@@ -83,7 +86,7 @@ class LoginControllerTest extends TestCase
 
         $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors('email');
-        $this->assertStringContainsString(
+        static::assertStringContainsString(
             'Too many login attempts.',
             collect(
                 $response
@@ -94,12 +97,12 @@ class LoginControllerTest extends TestCase
                     ->get('email')
             )->first()
         );
-        $this->assertTrue(session()->hasOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertTrue(session()->hasOldInput('email'));
+        static::assertFalse(session()->hasOldInput('password'));
         $this->assertGuest();
     }
 
-    public function test_can_login_with_correct_credentials()
+    public function testCanLoginWithCorrectCredentials()
     {
         $password = 'gJrFhC2B-!Y!4CTk';
 
@@ -117,12 +120,11 @@ class LoginControllerTest extends TestCase
     }
 
     /**
-     * @test
      * @group passing
      *
      * @throws \Exception
      */
-    public function test_can_be_remembered()
+    public function testCanBeRemembered()
     {
         $password = 'gJrFhC2B-!Y!4CTk';
 
@@ -147,7 +149,7 @@ class LoginControllerTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
-    public function test_cant_logout_if_not_authenticated()
+    public function testCantLogoutIfNotAuthenticated()
     {
         $response = $this->post(route('logout'));
 
@@ -155,7 +157,7 @@ class LoginControllerTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_can_logout_if_authenticated()
+    public function testCanLogoutIfAuthenticated()
     {
         $this->be(User::factory()->create());
 

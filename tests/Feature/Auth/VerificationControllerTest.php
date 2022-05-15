@@ -14,8 +14,11 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\VerificationController
+ *
+ * @internal
+ * @coversNothing
  */
-class VerificationControllerTest extends TestCase
+final class VerificationControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -31,7 +34,137 @@ class VerificationControllerTest extends TestCase
             ])
             ->get('admin/verified', function () {
                 return response('Accessed a resource that requires verification.');
-            });
+            })
+        ;
+    }
+
+    public function testCantVisitEmailVerificationNoticeWhenUnauthenticated()
+    {
+        $response = $this->get(route('verification.notice'));
+
+        $response->assertRedirect(route('login'));
+    }
+
+    public function testCantVisitEmailVerificationNoticeWhenAlreadyVerified()
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->get(route('verification.notice'));
+
+        $response->assertRedirect(route('home'));
+    }
+
+    public function testCanVisitEmailVerificationWhenNotVerified()
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('verification.notice'));
+
+        $response->assertStatus(200);
+
+        $response->assertViewIs('auth.verify');
+    }
+
+    public function testCantVisitEmailVerificationWhenUnauthenticated()
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->get($this->validVerificationVerifyRoute($user));
+
+        $response->assertRedirect(route('login'));
+    }
+
+    public function testCantVisitEmailVerificationImpersonatingOtherUsers()
+    {
+        $user_1 = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $user_2 = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($user_1)->get($this->validVerificationVerifyRoute($user_2));
+
+        $response->assertForbidden();
+
+        static::assertFalse($user_2->fresh()->hasVerifiedEmail());
+    }
+
+    public function testCantVisitEmailVerificationWhenVerified()
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->get($this->validVerificationVerifyRoute($user));
+
+        $response->assertRedirect(route('home'));
+    }
+
+    public function testCantVerifyEmailWithInvalidSignature()
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->get($this->invalidVerificationVerifyRoute($user));
+
+        $response->assertStatus(403);
+    }
+
+    public function testCanVerifyEmailWithValidSignature()
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($user)->get($this->validVerificationVerifyRoute($user));
+
+        $response->assertRedirect(route('home'));
+
+        static::assertNotNull($user->fresh()->email_verified_at);
+    }
+
+    public function testCantRequestResendEmailVerificationLinkWhenUnauthenticated()
+    {
+        $response = $this->post(route('verification.resend'));
+
+        $response->assertRedirect(route('login'));
+    }
+
+    public function testCantVisitResendEmailVerificationWhenAlreadyVerified()
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->post(route('verification.resend'));
+
+        $response->assertRedirect(route('home'));
+    }
+
+    public function testCanRequestResendEmailVerificationLink()
+    {
+        Notification::fake();
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->from(route('verification.notice'))
+            ->post(route('verification.resend'))
+        ;
+
+        Notification::assertSentTo($user, VerifyEmail::class);
+
+        $response->assertRedirect(route('verification.notice'));
     }
 
     protected function validVerificationVerifyRoute(User $user)
@@ -56,133 +189,5 @@ class VerificationControllerTest extends TestCase
                 'hash' => 'invalid-signature',
             ]
         );
-    }
-
-    public function test_cant_visit_email_verification_notice_when_unauthenticated()
-    {
-        $response = $this->get(route('verification.notice'));
-
-        $response->assertRedirect(route('login'));
-    }
-
-    public function test_cant_visit_email_verification_notice_when_already_verified()
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($user)->get(route('verification.notice'));
-
-        $response->assertRedirect(route('home'));
-    }
-
-    public function test_can_visit_email_verification_when_not_verified()
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($user)->get(route('verification.notice'));
-
-        $response->assertStatus(200);
-
-        $response->assertViewIs('auth.verify');
-    }
-
-    public function test_cant_visit_email_verification_when_unauthenticated()
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->get($this->validVerificationVerifyRoute($user));
-
-        $response->assertRedirect(route('login'));
-    }
-
-    public function test_cant_visit_email_verification_impersonating_other_users()
-    {
-        $user_1 = User::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $user_2 = User::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($user_1)->get($this->validVerificationVerifyRoute($user_2));
-
-        $response->assertForbidden();
-
-        $this->assertFalse($user_2->fresh()->hasVerifiedEmail());
-    }
-
-    public function test_cant_visit_email_verification_when_verified()
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($user)->get($this->validVerificationVerifyRoute($user));
-
-        $response->assertRedirect(route('home'));
-    }
-
-    public function test_cant_verify_email_with_invalid_signature()
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($user)->get($this->invalidVerificationVerifyRoute($user));
-
-        $response->assertStatus(403);
-    }
-
-    public function test_can_verify_email_with_valid_signature()
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($user)->get($this->validVerificationVerifyRoute($user));
-
-        $response->assertRedirect(route('home'));
-
-        $this->assertNotNull($user->fresh()->email_verified_at);
-    }
-
-    public function test_cant_request_resend_email_verification_link_when_unauthenticated()
-    {
-        $response = $this->post(route('verification.resend'));
-
-        $response->assertRedirect(route('login'));
-    }
-
-    public function test_cant_visit_resend_email_verification_when_already_verified()
-    {
-        $user = User::factory()->create([
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($user)->post(route('verification.resend'));
-
-        $response->assertRedirect(route('home'));
-    }
-
-    public function test_can_request_resend_email_verification_link()
-    {
-        Notification::fake();
-        $user = User::factory()->create([
-            'email_verified_at' => null,
-        ]);
-
-        $response = $this->actingAs($user)
-            ->from(route('verification.notice'))
-            ->post(route('verification.resend'));
-
-        Notification::assertSentTo($user, VerifyEmail::class);
-
-        $response->assertRedirect(route('verification.notice'));
     }
 }

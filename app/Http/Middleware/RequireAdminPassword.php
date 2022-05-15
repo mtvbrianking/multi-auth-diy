@@ -24,11 +24,6 @@ class RequireAdminPassword
 
     /**
      * Create a new middleware instance.
-     *
-     * @param \Illuminate\Contracts\Routing\ResponseFactory $responseFactory
-     * @param \Illuminate\Contracts\Routing\UrlGenerator    $urlGenerator
-     *
-     * @return void
      */
     public function __construct(ResponseFactory $responseFactory, UrlGenerator $urlGenerator)
     {
@@ -40,8 +35,7 @@ class RequireAdminPassword
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     * @param string|null              $redirectToRoute
+     * @param null|string $redirectToRoute
      *
      * @return mixed
      */

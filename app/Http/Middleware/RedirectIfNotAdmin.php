@@ -12,8 +12,7 @@ class RedirectIfNotAdmin
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     * @param string                   $guard
+     * @param string $guard
      *
      * @throws \Illuminate\Auth\AuthenticationException
      *

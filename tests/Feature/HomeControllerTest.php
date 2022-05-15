@@ -8,22 +8,25 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\HomeController
+ *
+ * @internal
+ * @coversNothing
  */
-class HomeControllerTest extends TestCase
+final class HomeControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_can_visit_landing_page_unauthenticated()
+    public function testCanVisitLandingPageUnauthenticated()
     {
         $this->get(url('/'))->assertStatus(200);
     }
 
-    public function test_can_visit_home_unauthenticated()
+    public function testCanVisitHomeUnauthenticated()
     {
         $this->get(route('home'))->assertStatus(302)->assertRedirect(route('login'));
     }
 
-    public function test_can_visit_home_if_authenticated()
+    public function testCanVisitHomeIfAuthenticated()
     {
         $user = User::factory()->create();
 

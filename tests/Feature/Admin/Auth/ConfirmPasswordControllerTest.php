@@ -11,8 +11,11 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\Auth\ConfirmPasswordController
+ *
+ * @internal
+ * @coversNothing
  */
-class ConfirmPasswordControllerTest extends TestCase
+final class ConfirmPasswordControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -28,17 +31,18 @@ class ConfirmPasswordControllerTest extends TestCase
             ])
             ->get('admin/protected', function (Request $request) {
                 return response('Admins must confirm their password before reading this.');
-            });
+            })
+        ;
     }
 
-    public function test_cant_visit_confirm_password_when_not_authenticated()
+    public function testCantVisitConfirmPasswordWhenNotAuthenticated()
     {
         $response = $this->get(route('admin.password.protected'));
 
         $response->assertRedirect(route('admin.login'));
     }
 
-    public function test_can_visit_confirm_password_when_authenticated()
+    public function testCanVisitConfirmPasswordWhenAuthenticated()
     {
         $admin = Admin::factory()->make();
 
@@ -47,13 +51,14 @@ class ConfirmPasswordControllerTest extends TestCase
         $response->assertRedirect(route('admin.password.confirm'));
     }
 
-    public function test_can_visit_confirm_password_when_authenticated_json()
+    public function testCanVisitConfirmPasswordWhenAuthenticatedJson()
     {
         $admin = Admin::factory()->make();
 
         $response = $this->actingAs($admin, 'admin')
             ->withHeader('Accept', 'application/json')
-            ->get(route('admin.password.protected'));
+            ->get(route('admin.password.protected'))
+        ;
 
         $response->assertStatus(423);
 
@@ -62,7 +67,7 @@ class ConfirmPasswordControllerTest extends TestCase
         ]);
     }
 
-    public function test_shows_admin_confirm_password_page()
+    public function testShowsAdminConfirmPasswordPage()
     {
         $admin = Admin::factory()->make();
 
@@ -71,7 +76,7 @@ class ConfirmPasswordControllerTest extends TestCase
         $response->assertViewIs('admin.auth.passwords.confirm');
     }
 
-    public function test_cant_confirm_with_invalid_password()
+    public function testCantConfirmWithInvalidPassword()
     {
         $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
@@ -81,13 +86,14 @@ class ConfirmPasswordControllerTest extends TestCase
             ->from(route('admin.password.confirm'))
             ->post(route('admin.password.confirm'), [
                 'password' => 'invalid-password',
-            ]);
+            ])
+        ;
 
         $response->assertRedirect(route('admin.password.confirm'));
-        $this->assertFalse(session()->hasOldInput('password'));
+        static::assertFalse(session()->hasOldInput('password'));
     }
 
-    public function test_can_confirm_with_valid_password()
+    public function testCanConfirmWithValidPassword()
     {
         $admin = Admin::factory()->create([
             'password' => Hash::make('gJrFhC2B-!Y!4CTk'),
@@ -98,12 +104,13 @@ class ConfirmPasswordControllerTest extends TestCase
             ->from(route('admin.password.confirm'))
             ->post(route('admin.password.confirm'), [
                 'password' => 'gJrFhC2B-!Y!4CTk',
-            ]);
+            ])
+        ;
 
         $response->assertRedirect(route('admin.home'));
     }
 
-    public function test_should_not_reconfirm_password_not_if_timed_out()
+    public function testShouldNotReconfirmPasswordNotIfTimedOut()
     {
         $this->app['session']->put('admin.auth.password_confirmed_at', time());
 
@@ -118,7 +125,7 @@ class ConfirmPasswordControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_should_reconfirm_password_if_timed_out()
+    public function testShouldReconfirmPasswordIfTimedOut()
     {
         $passwordConfirmedAt = time() - 100;
 
