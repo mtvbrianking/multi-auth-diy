@@ -58,6 +58,10 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-progress --no-update
           composer update --prefer-dist --no-interaction --no-progress
 
+      - name: Generate application encryption key
+        run: |
+          php artisan key:generate
+
       # - name: Debug MySQL DB CONNECTION
       #   env:
       #     MYSQL_PWD: M4yLEJyZuGF4B3JF
