@@ -58,6 +58,12 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-progress --no-update
           composer update --prefer-dist --no-interaction --no-progress
 
+      - name: Debug MySQL DB CONNECTION
+        env:
+          MYSQL_PWD: M4yLEJyZuGF4B3JF
+        run: |
+          mysql --host 127.0.0.1 --port 3306 --user root --database multi_auth_diy_tests -e "SHOW TABLES"
+
       - name: Execute tests, generate code coverage report
         env:
           APP_ENV: testing
@@ -68,7 +74,5 @@ jobs:
           DB_TEST_USERNAME: root
           DB_TEST_PASSWORD: M4yLEJyZuGF4B3JF
         run: |
-          MYSQL_PWD=M4yLEJyZuGF4B3JF
-          mysql --host 127.0.0.1 --port 3306 --user root --database multi_auth_diy_tests -e "SHOW TABLES"
           php artisan migrate:fresh --database=tests
           vendor/bin/phpunit
