@@ -1,5 +1,5 @@
 build:
-  
+
   environment:
     php: 8.1.2
 
@@ -9,8 +9,8 @@ build:
         override:
           - php-scrutinizer-run
 
-checks:
-  php: true
+# checks:
+#   php: true
 
 filter:
   excluded_paths:
@@ -18,5 +18,3 @@ filter:
 
 tools:
   external_code_coverage: true
-
-coding_style:
