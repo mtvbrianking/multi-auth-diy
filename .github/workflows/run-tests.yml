@@ -61,6 +61,7 @@ jobs:
       # https://blog.shaharia.com/github-actions-workflows-ci-for-php-developer
       - name: Execute tests, generate code coverage report
         env:
+          APP_ENV: testing
           DB_CONNECTION: tests
           DB_TEST_HOST: 127.0.0.1
           DB_TEST_PORT: 3306
