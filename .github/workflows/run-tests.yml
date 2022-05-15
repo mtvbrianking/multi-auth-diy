@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.1, 8.0]
+        php: [8.1]
         laravel: [^8.0]
     
     name: TESTS PHP ${{ matrix.php }} LARAVEL ${{ matrix.laravel }}
@@ -68,5 +68,5 @@ jobs:
           DB_TEST_USERNAME: root
           DB_TEST_PASSWORD: M4yLEJyZuGF4B3JF
         run: |
-          php artisan migrate:fresh --database=tests --quiet
+          php artisan migrate:fresh --database=tests
           vendor/bin/phpunit
