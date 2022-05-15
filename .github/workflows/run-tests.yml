@@ -75,7 +75,7 @@ jobs:
           DB_TEST_PASSWORD: M4yLEJyZuGF4B3JF
         run: |
           php artisan migrate:fresh --database=tests
-          phpunit --coverage-text --coverage-clover=coverage.clover
+          vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
       - name: Save code coverage report
         uses: actions/upload-artifact@v2
