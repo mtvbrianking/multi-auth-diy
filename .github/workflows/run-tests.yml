@@ -45,7 +45,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, pcov
           tools: composer:v2
-          # coverage: pcov
+          coverage: pcov
 
       - name: Cache dependencies
         uses: actions/cache@v2
@@ -58,11 +58,11 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-progress --no-update
           composer update --prefer-dist --no-interaction --no-progress
 
-      - name: Debug MySQL DB CONNECTION
-        env:
-          MYSQL_PWD: M4yLEJyZuGF4B3JF
-        run: |
-          mysql --host 127.0.0.1 --port 3306 --user root --database multi_auth_diy_tests -e "SHOW TABLES"
+      # - name: Debug MySQL DB CONNECTION
+      #   env:
+      #     MYSQL_PWD: M4yLEJyZuGF4B3JF
+      #   run: |
+      #     mysql --host 127.0.0.1 --port 3306 --user root --database multi_auth_diy_tests
 
       - name: Execute tests, generate code coverage report
         env:
@@ -74,5 +74,39 @@ jobs:
           DB_TEST_USERNAME: root
           DB_TEST_PASSWORD: M4yLEJyZuGF4B3JF
         run: |
-          php artisan migrate:fresh --database=tests
-          vendor/bin/phpunit
+          php artisan migrate:fresh --database=tests --quiet
+          run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+
+      - name: Save code coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage.clover
+
+  coverage:
+    needs: tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [7.4]
+    name: Coverage PHP ${{ matrix.php }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+
+      - name: Retrieve code coverage report
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage
+
+      - name: Upload code coverage report
+        run: |
+          wget https://scrutinizer-ci.com/ocular.phar
+          php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+

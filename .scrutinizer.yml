@@ -1,0 +1,12 @@
+checks:
+  php: true
+
+filter:
+  excluded_paths:
+    - "docs/"
+    - "tests/"
+
+tools:
+  external_code_coverage: true
+
+coding_style:
