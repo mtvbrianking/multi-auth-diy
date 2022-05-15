@@ -8,11 +8,8 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\HomeController
- *
- * @internal
- * @coversNothing
  */
-final class HomeControllerTest extends TestCase
+class HomeControllerTest extends TestCase
 {
     use DatabaseTransactions;
 

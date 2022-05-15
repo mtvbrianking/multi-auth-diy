@@ -9,9 +9,6 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\HomeController
- *
- * @internal
- * @coversNothing
  */
 final class HomeControllerTest extends TestCase
 {

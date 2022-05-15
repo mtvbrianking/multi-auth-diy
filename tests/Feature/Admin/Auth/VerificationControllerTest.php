@@ -14,9 +14,6 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\Auth\VerificationController
- *
- * @internal
- * @coversNothing
  */
 final class VerificationControllerTest extends TestCase
 {

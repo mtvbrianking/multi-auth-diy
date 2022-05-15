@@ -12,9 +12,6 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Admin\Auth\RegisterController
- *
- * @internal
- * @coversNothing
  */
 final class RegisterControllerTest extends TestCase
 {

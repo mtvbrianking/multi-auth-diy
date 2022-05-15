@@ -72,7 +72,7 @@
         ],
         "test-coverage": [
             "@php artisan migrate:fresh --database=tests --quiet",
-            "phpunit --coverage-text --coverage-html coverage"
+            "vendor/bin/phpunit --coverage-html coverage"
         ]
     }
 }

@@ -12,9 +12,6 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\ResetPasswordController
- *
- * @internal
- * @coversNothing
  */
 final class ResetPasswordControllerTest extends TestCase
 {

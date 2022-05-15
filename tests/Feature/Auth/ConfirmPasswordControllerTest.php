@@ -11,9 +11,6 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\ConfirmPasswordController
- *
- * @internal
- * @coversNothing
  */
 final class ConfirmPasswordControllerTest extends TestCase
 {

@@ -9,9 +9,6 @@ build:
         override:
           - php-scrutinizer-run
 
-# checks:
-#   php: true
-
 filter:
   excluded_paths:
     - "tests/"

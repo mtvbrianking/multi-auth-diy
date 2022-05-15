@@ -10,9 +10,6 @@ use Tests\TestCase;
 
 /**
  * @see \App\Http\Controllers\Auth\LoginController
- *
- * @internal
- * @coversNothing
  */
 final class LoginControllerTest extends TestCase
 {
