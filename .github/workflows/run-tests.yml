@@ -1,0 +1,80 @@
+name: run-tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: Tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, pcov
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Create database
+        run: |
+            sudo systemctl start mysql
+            mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.json') }}
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare Application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Add NodeJS
+        uses: actions/setup-node@v3
+
+      - name: Setup Vite Manifest
+        run: |
+          yarn install
+          yarn build
+
+      - name: Execute tests, generate code coverage report
+        env:
+          DB_PASSWORD: root
+        run: vendor/bin/pest --coverage-text --coverage-clover=coverage.clover
+
+      - name: Save code coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage.clover
+
+  coverage:
+    needs: tests
+    runs-on: ubuntu-latest
+    name: Coverage
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+
+      - name: Retrieve code coverage report
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage
+
+      - name: Upload code coverage report
+        run: |
+          wget https://scrutinizer-ci.com/ocular.phar
+          php ocular.phar code-coverage:upload --format=php-clover coverage.clover
