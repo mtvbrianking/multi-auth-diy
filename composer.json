@@ -53,9 +53,8 @@
         ],
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage-html coverage",
-        "cs": "vendor/bin/pint",
-        "cs-test": "vendor/bin/pint --test",
-        "cs-dirty": "vendor/bin/pint --dirty"
+        "cs-fix": "vendor/bin/pint --dirty",
+        "cs-lint": "vendor/bin/pint --test"
     },
     "extra": {
         "laravel": {
