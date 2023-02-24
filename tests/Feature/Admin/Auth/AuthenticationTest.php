@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Admin;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Str;
 
 test('login screen can be rendered', function () {
@@ -15,7 +14,7 @@ test('login screen can be rendered', function () {
 
     $response = $this->actingAs($admin, 'admin')->get(route('admin.login'));
 
-    $response->assertRedirect(RouteServiceProvider::ADMIN_HOME);
+    $response->assertRedirect('/admin');
 });
 
 test('users can authenticate using the login screen', function () {
@@ -27,7 +26,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticatedAs($admin, 'admin');
-    $response->assertRedirect(RouteServiceProvider::ADMIN_HOME);
+    $response->assertRedirect('/admin');
 });
 
 test('users can not authenticate with invalid password', function () {

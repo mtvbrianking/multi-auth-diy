@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Admin;
-use App\Providers\RouteServiceProvider;
 
 test('registration screen can be rendered', function () {
     $response = $this->get('/admin/register');
@@ -18,5 +17,5 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticatedAs(Admin::first(), 'admin');
-    $response->assertRedirect(RouteServiceProvider::ADMIN_HOME);
+    $response->assertRedirect('/admin');
 });
