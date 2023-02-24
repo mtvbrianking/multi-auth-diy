@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\Admin;
+use App\Notifications\Admin\Auth\VerifyEmail;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
-use App\Notifications\Admin\Auth\VerifyEmail;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
