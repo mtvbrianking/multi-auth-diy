@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e55679b4f04edf29a88eef8c4c01f3bb",
+    "content-hash": "f99dd6debeb628b6d7e0dd97be4c7ff3",
     "packages": [
         {
             "name": "brick/math",
@@ -1708,47 +1708,6 @@
                 }
             ],
             "time": "2022-04-17T13:12:02+00:00"
-        },
-        {
-            "name": "module/seller",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "./seller",
-                "reference": "42b7369cc80b59152f8a4df83ccf0568eb86156f"
-            },
-            "require": {
-                "laravel/framework": "^10.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Seller\\SellerServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Seller\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Seller\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "test-coverage": [
-                    "vendor/bin/pest --coverage-html coverage"
-                ]
-            },
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "monolog/monolog",
@@ -8278,9 +8237,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "module/seller": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
