@@ -2,7 +2,6 @@
 
 use App\Models\Admin;
 use App\Notifications\Admin\Auth\VerifyEmail;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
@@ -13,7 +12,7 @@ test('email verification screen can be rendered', function () {
 
     $response = $this->actingAs($verifiedAdmin, 'admin')->get('/admin/verify-email');
 
-    $response->assertRedirect(RouteServiceProvider::ADMIN_HOME);
+    $response->assertRedirect('/admin');
 
     // ...
 
@@ -40,7 +39,7 @@ test('email can be verified', function () {
 
     Event::assertNotDispatched(Verified::class);
 
-    $response->assertRedirect(RouteServiceProvider::ADMIN_HOME.'?verified=1');
+    $response->assertRedirect('/admin?verified=1');
 
     // ...
 
@@ -53,7 +52,7 @@ test('email can be verified', function () {
 
     Event::assertDispatched(Verified::class);
     expect($nonVerifiedAdmin->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect(RouteServiceProvider::ADMIN_HOME.'?verified=1');
+    $response->assertRedirect('/admin?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
@@ -74,7 +73,7 @@ test('resends email verification link', function () {
 
     $response = $this->actingAs($verifiedAdmin, 'admin')->post(route('admin.verification.send'));
 
-    $response->assertRedirect(RouteServiceProvider::ADMIN_HOME);
+    $response->assertRedirect('/admin');
 
     // ...
 
