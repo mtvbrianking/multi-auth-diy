@@ -7,7 +7,6 @@ use App\Modules\Sellers\Auth\SellerUserProvider;
 use App\Modules\Sellers\Models\Seller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class SellerServiceProvider extends ServiceProvider
@@ -19,7 +18,6 @@ class SellerServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
         $this->loadRoutesFrom(__DIR__.'/routes/seller.php');
-        Route::prefix('seller')->as('seller.')->middleware('web')->group(__DIR__.'/routes/seller.php');
         $this->loadViewsFrom(__DIR__.'/resources/views', 'seller');
 
         Blade::component('seller-app-layout', View\Components\SellerAppLayout::class);
