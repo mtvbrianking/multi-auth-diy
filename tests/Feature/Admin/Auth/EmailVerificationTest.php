@@ -39,7 +39,7 @@ test('email can be verified', function () {
 
     Event::assertNotDispatched(Verified::class);
 
-    $response->assertRedirect('/admin'.'?verified=1');
+    $response->assertRedirect('/admin?verified=1');
 
     // ...
 
@@ -52,7 +52,7 @@ test('email can be verified', function () {
 
     Event::assertDispatched(Verified::class);
     expect($nonVerifiedAdmin->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect('/admin'.'?verified=1');
+    $response->assertRedirect('/admin?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
