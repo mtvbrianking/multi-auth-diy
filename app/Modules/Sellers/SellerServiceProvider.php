@@ -30,8 +30,8 @@ class SellerServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerMiddleware();
-        // $this->registerAuthDrivers();
         $this->injectSellerAuth();
+        $this->registerAuthDrivers('sellers', 'seller', Seller::class);
     }
 
     /**
@@ -47,32 +47,52 @@ class SellerServiceProvider extends ServiceProvider
     }
 
     /**
+     * @see \Illuminate\Auth\AuthManager
      * @see https://www.devrohit.com/custom-authentication-in-laravel
      */
-    protected function registerAuthDrivers()
+    protected function registerAuthDrivers(string $provider, string $guard, string $model)
     {
-        Auth::provider('seller_provider_driver', function ($app) {
-            return new SellerUserProvider($app['hash'], Seller::class);
+        Auth::provider('seller_provider_driver', function ($app) use ($model) {
+            return new SellerUserProvider($app['hash'], $model);
         });
 
-        Auth::extend('seller_guard_driver', function ($app) {
-            $provider = Auth::createUserProvider('sellers');
+        /* AuthManager->createSessionDriver() */
+        Auth::extend('seller_guard_driver', function ($app) use ($provider, $guard) {
+            $userProvider = Auth::createUserProvider($provider);
 
-            return new SellerGuard('seller', $provider, $app['session.store']);
+            $sellerGuard = new SellerGuard($guard, $userProvider, $app['session.store']);
+
+            if (method_exists($sellerGuard, 'setCookieJar')) {
+                $sellerGuard->setCookieJar($this->app['cookie']);
+            }
+
+            if (method_exists($sellerGuard, 'setDispatcher')) {
+                $sellerGuard->setDispatcher($this->app['events']);
+            }
+
+            if (method_exists($sellerGuard, 'setRequest')) {
+                $sellerGuard->setRequest($this->app->refresh('request', $sellerGuard, 'setRequest'));
+            }
+
+            if (isset($config['remember'])) {
+                $sellerGuard->setRememberDuration($config['remember']);
+            }
+
+            return $sellerGuard;
         });
     }
 
     protected function injectSellerAuth()
     {
         $this->app['config']->set('auth.guards.seller', [
-            'driver' => 'session',
-            // 'driver' => 'seller_guard_driver',
+            // 'driver' => 'session',
+            'driver' => 'seller_guard_driver',
             'provider' => 'sellers',
         ]);
 
         $this->app['config']->set('auth.providers.sellers', [
-            'driver' => 'eloquent',
-            // 'driver' => 'seller_provider_driver',
+            // 'driver' => 'eloquent',
+            'driver' => 'seller_provider_driver',
             'model' => Models\Seller::class,
         ]);
 
