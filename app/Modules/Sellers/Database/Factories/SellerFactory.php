@@ -6,10 +6,17 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Seller>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Modules\Sellers\Models\Seller>
  */
 class SellerFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model|TModel>
+     */
+    protected $model = \App\Modules\Sellers\Models\Seller::class;
+
     /**
      * Define the model's default state.
      *

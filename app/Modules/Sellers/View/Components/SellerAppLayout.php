@@ -12,6 +12,6 @@ class SellerAppLayout extends Component
      */
     public function render(): View
     {
-        return view('seller::layouts.app');
+        return view('seller.layouts.app');
     }
 }

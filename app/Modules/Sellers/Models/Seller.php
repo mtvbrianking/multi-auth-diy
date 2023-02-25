@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sellers\Models;
 
+use App\Modules\Sellers\Database\Factories\SellerFactory;
 use App\Modules\Sellers\Notifications\Auth\ResetPassword;
 use App\Modules\Sellers\Notifications\Auth\VerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -43,6 +44,16 @@ class Seller extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory<static>
+     */
+    protected static function newFactory()
+    {
+        return SellerFactory::new();
+    }
 
     /**
      * Send the password reset notification.

@@ -22,6 +22,6 @@ class VerifyEmailController extends Controller
             event(new Verified($request->user('seller')));
         }
 
-        return redirect()->intended('/seller.?verified=1');
+        return redirect()->intended('/seller?verified=1');
     }
 }

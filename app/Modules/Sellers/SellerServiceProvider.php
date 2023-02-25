@@ -76,7 +76,7 @@ class SellerServiceProvider extends ServiceProvider
             'model' => Models\Seller::class,
         ]);
 
-        $this->app['config']->set('auth.passwords.seller', [
+        $this->app['config']->set('auth.passwords.sellers', [
             'provider' => 'sellers',
             'table' => 'seller_password_reset_tokens',
             'expire' => 60,

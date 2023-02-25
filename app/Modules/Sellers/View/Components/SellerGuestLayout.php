@@ -12,6 +12,6 @@ class SellerGuestLayout extends Component
      */
     public function render(): View
     {
-        return view('seller::layouts.guest');
+        return view('seller.layouts.guest');
     }
 }

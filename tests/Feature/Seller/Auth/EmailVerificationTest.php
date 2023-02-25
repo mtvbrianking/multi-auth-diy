@@ -39,7 +39,7 @@ test('email can be verified', function () {
 
     Event::assertNotDispatched(Verified::class);
 
-    $response->assertRedirect('/seller'.'?verified=1');
+    $response->assertRedirect('/seller?verified=1');
 
     // ...
 
@@ -52,7 +52,7 @@ test('email can be verified', function () {
 
     Event::assertDispatched(Verified::class);
     expect($nonVerifiedSeller->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect('/seller'.'?verified=1');
+    $response->assertRedirect('/seller?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
