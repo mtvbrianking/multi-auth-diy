@@ -7,6 +7,7 @@ use App\Modules\Sellers\Auth\SellerUserProvider;
 use App\Modules\Sellers\Models\Seller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class SellerServiceProvider extends ServiceProvider
@@ -18,6 +19,7 @@ class SellerServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
         $this->loadRoutesFrom(__DIR__.'/routes/seller.php');
+        Route::prefix('seller')->as('seller.')->middleware('web')->group(__DIR__.'/routes/seller.php');
         $this->loadViewsFrom(__DIR__.'/resources/views', 'seller');
 
         Blade::component('seller-app-layout', View\Components\SellerAppLayout::class);
@@ -30,7 +32,7 @@ class SellerServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerMiddleware();
-        $this->injectSellerAuth();
+        $this->injectAuthConfiguration();
         $this->registerAuthDrivers('sellers', 'seller', Seller::class);
     }
 
@@ -82,7 +84,7 @@ class SellerServiceProvider extends ServiceProvider
         });
     }
 
-    protected function injectSellerAuth()
+    protected function injectAuthConfiguration()
     {
         $this->app['config']->set('auth.guards.seller', [
             // 'driver' => 'session',
