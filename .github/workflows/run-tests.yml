@@ -3,31 +3,48 @@ name: run-tests
 on: [push, pull_request]
 
 jobs:
+
   tests:
+
     runs-on: ubuntu-latest
-    name: Tests
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.2, 8.3]
+        laravel: [^11.0]
+        include:
+          - laravel: ^11.0
+            testbench: 9.0.2
+
+    name: P ${{ matrix.php }} L ${{ matrix.laravel }} T ${{ matrix.testbench }}
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, pcov
           tools: composer:v2
-          coverage: pcov
 
       - name: Create database
         run: |
             sudo systemctl start mysql
             mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
 
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: ~/.composer/cache/files
-          key: dependencies-composer-${{ hashFiles('composer.json') }}
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
@@ -38,43 +55,14 @@ jobs:
           php artisan key:generate
 
       - name: Add NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Setup Vite Manifest
         run: |
           yarn install
           yarn build
 
-      - name: Execute tests, generate code coverage report
+      - name: Run tests
         env:
           DB_PASSWORD: root
-        run: vendor/bin/pest --coverage-text --coverage-clover=coverage.clover
-
-      - name: Save code coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: coverage.clover
-
-  coverage:
-    needs: tests
-    runs-on: ubuntu-latest
-    name: Coverage
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.3
-
-      - name: Retrieve code coverage report
-        uses: actions/download-artifact@v3
-        with:
-          name: coverage
-
-      - name: Upload code coverage report
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+        run: vendor/bin/phpunit
