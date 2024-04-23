@@ -30,34 +30,36 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, pcov
           tools: composer:v2
 
-      - name: Create database
-        run: |
-            sudo systemctl start mysql
-            mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
-
-      - name: Get composer cache directory
+      - name: Get composer cache dir
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache dependencies
+      - name: Cache composer deps
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Install composer deps
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-progress --no-update
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Create MySQL database
+        run: |
+            sudo systemctl start mysql
+            mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS laravel;'
 
       - name: Prepare Application
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      - name: Add NodeJS
+      - name: Setup NodeJS
         uses: actions/setup-node@v4
 
-      - name: Setup Vite Manifest
+      - name: Setup the frontend
         run: |
           yarn install
           yarn build
